@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>富山湾 出艇判断チェック</title>
+<meta name="description" content="富山湾カヤックフィッシングの出艇判断（GO/CAUTION/STOP）簡易チェックツール">
+<meta name="theme-color" content="#0a3d62">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="出艇判断">
+<style>
+  :root{
+    --go:#1e9e54; --caution:#e6a100; --stop:#d63031;
+    --go-bg:#e8f7ee; --caution-bg:#fdf4e0; --stop-bg:#fdecec;
+    --bg:#f3f6f9; --card:#ffffff; --ink:#1c2733; --muted:#67778a;
+    --line:#e2e8f0; --accent:#0a3d62;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.6;
+    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  .wrap{max-width:560px;margin:0 auto;padding:16px 14px 40px}
+  header.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+  header.top h1{font-size:18px;margin:0;letter-spacing:.02em}
+  .refresh{
+    border:1px solid var(--line);background:var(--card);color:var(--accent);
+    border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;white-space:nowrap
+  }
+  .refresh:active{transform:scale(.97)}
+  .spotbar{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .spotbar label{font-size:12px;color:var(--muted);white-space:nowrap}
+  select#spot{
+    flex:1;font-size:15px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;
+    background:var(--card);color:var(--ink);font-weight:600;
+    -webkit-appearance:none;appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2367778a' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 12px center
+  }
+  .sub{color:var(--muted);font-size:11.5px;margin:0 0 14px}
+  .legend{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:0 0 14px}
+  .legend span{display:inline-flex;align-items:center;gap:4px}
+  .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
+  .day{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:0;margin-bottom:16px;overflow:hidden;box-shadow:0 1px 2px rgba(16,42,67,.04)
+  }
+  .day-head{display:flex;align-items:baseline;gap:8px;padding:14px 16px 0}
+  .day-head h2{font-size:16px;margin:0}
+  .day-date{color:var(--muted);font-size:12px}
+  .verdict{margin:12px 16px 0;border-radius:14px;padding:16px;display:flex;align-items:center;gap:14px}
+  .verdict.GO{background:var(--go-bg)} .verdict.CAUTION{background:var(--caution-bg)} .verdict.STOP{background:var(--stop-bg)}
+  .badge{font-size:26px;font-weight:800;letter-spacing:.04em;color:#fff;border-radius:12px;padding:10px 14px;min-width:118px;text-align:center;line-height:1.1}
+  .badge.GO{background:var(--go)} .badge.CAUTION{background:var(--caution)} .badge.STOP{background:var(--stop)}
+  .badge small{display:block;font-size:11px;font-weight:600;opacity:.9;margin-top:3px;letter-spacing:.02em}
+  .verdict-text{font-size:13px;color:var(--ink)} .verdict-text .why{font-weight:600}
+  .conf{margin:10px 16px 0;font-size:12px;color:#8a5a00;background:#fff7e6;border:1px solid #ffe2a8;border-radius:10px;padding:8px 10px;display:none}
+  .conf.show{display:block}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);margin:14px 0 0;border-top:1px solid var(--line)}
+  .cell{background:var(--card);padding:11px 14px}
+  .cell .k{font-size:11px;color:var(--muted);margin:0 0 2px} .cell .v{font-size:15px;font-weight:700;margin:0}
+  .cell .v small{font-weight:500;font-size:12px;color:var(--muted)}
+  .flag-off{color:var(--stop);font-weight:700}
+  .tide-row{padding:11px 14px;background:var(--card);border-top:1px solid var(--line);font-size:13px}
+  .tide-row .k{font-size:11px;color:var(--muted);margin:0 0 4px}
+  .tide-line{display:flex;flex-wrap:wrap;gap:6px 14px}
+  .tide-line span{white-space:nowrap} .tide-line .hi{color:#0a6cb3;font-weight:600} .tide-line .lo{color:#b06a00;font-weight:600}
+  details.hourly{border-top:1px solid var(--line);background:var(--card)}
+  details.hourly summary{padding:11px 14px;font-size:13px;color:var(--accent);font-weight:600;cursor:pointer;list-style:none}
+  details.hourly summary::-webkit-details-marker{display:none}
+  details.hourly summary::after{content:"▾";float:right;color:var(--muted)}
+  details.hourly[open] summary::after{content:"▴"}
+  .htable{overflow-x:auto;padding:0 8px 12px}
+  table{border-collapse:collapse;font-size:12px;width:100%;min-width:400px}
+  th,td{padding:5px 6px;text-align:center;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{color:var(--muted);font-weight:600} td.warn{color:var(--stop);font-weight:700}
+  .hbadge{display:inline-block;font-size:10px;font-weight:800;color:#fff;border-radius:5px;padding:2px 7px;letter-spacing:.02em}
+  .hbadge.GO{background:var(--go)} .hbadge.CAUTION{background:var(--caution)} .hbadge.STOP{background:var(--stop)}
+  /* この先のコンパクト行 */
+  .sectionhead{font-size:13px;color:var(--muted);font-weight:600;margin:4px 2px 8px}
+  .crow{display:grid;grid-template-columns:auto 96px 1fr;gap:10px;align-items:center;
+    background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+  .crow.GO{border-left:4px solid var(--go)} .crow.CAUTION{border-left:4px solid var(--caution)} .crow.STOP{border-left:4px solid var(--stop)}
+  .cdate{font-size:14px;font-weight:700;text-align:center;line-height:1.15}
+  .cdate small{display:block;font-size:11px;color:var(--muted);font-weight:500}
+  .cbadge{font-size:14px;font-weight:800;color:#fff;border-radius:8px;padding:6px 4px;text-align:center;letter-spacing:.03em}
+  .cbadge.GO{background:var(--go)} .cbadge.CAUTION{background:var(--caution)} .cbadge.STOP{background:var(--stop)}
+  .cstats{font-size:12px;color:var(--ink);line-height:1.5}
+  .cstats .lab{color:var(--muted)} .cstats .lc{color:#8a5a00;font-weight:600}
+  .disclaimer{background:#fff;border:1px solid var(--line);border-left:4px solid var(--caution);border-radius:10px;padding:12px 14px;font-size:12.5px;color:var(--ink);margin:14px 0 14px}
+  .disclaimer b{color:#a06a00}
+  .credit{font-size:11px;color:var(--muted);text-align:center;line-height:1.8} .credit a{color:var(--muted)}
+  .loading,.error{text-align:center;padding:40px 16px;color:var(--muted)} .error{color:var(--stop)}
+  .spinner{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>🛶 富山湾 出艇判断チェック</h1>
+    <button class="refresh" id="refreshBtn">↻ 更新</button>
+  </header>
+  <div class="spotbar">
+    <label for="spot">地点</label>
+    <select id="spot"></select>
+  </div>
+  <p class="sub" id="sub">読み込み中…</p>
+
+  <div class="legend">
+    <span><i class="dot" style="background:var(--go)"></i>GO 出られそう</span>
+    <span><i class="dot" style="background:var(--caution)"></i>CAUTION 要確認</span>
+    <span><i class="dot" style="background:var(--stop)"></i>STOP やめる</span>
+  </div>
+
+  <div id="content">
+    <div class="loading"><div class="spinner"></div>データを取得しています…</div>
+  </div>
+
+  <div class="disclaimer">
+    ⚠️ <b>これは簡易的な目安です。</b>最終判断は、海快晴等の専門情報や現地での目視確認と合わせて、必ず<b>自己責任</b>で行ってください。先の予報ほど外れやすく、風・波・雷・潮汐は急変します。少しでも不安があれば出艇を見送ってください。
+  </div>
+
+  <p class="credit">
+    気象・海象データ：Powered by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a>（<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>）<br>
+    潮汐データ：<a href="https://tide736.net/" target="_blank" rel="noopener">tide736.net</a>（気象庁 潮位表をもとに算出）
+  </p>
+</div>
+
+<script>
+//=================== 設定 ===================
+// 出艇地点プリセット（lat/lon=代表座標、hc=最寄りの潮汐観測港）
+// 潮汐港: 1=阿尾(氷見) 2=伏木(高岡) 3=富山(富山港=岩瀬・水橋の最寄り) 4=生地(黒部) 5=宮崎(朝日)
+const SPOTS = [
+  {id:"bay",    name:"富山湾の代表地点",      lat:36.80, lon:137.20, hc:3, tide:"富山"},
+  {id:"iwase",  name:"岩瀬（富山港）",        lat:36.78, lon:137.21, hc:3, tide:"富山"},
+  {id:"mizuhashi", name:"水橋",               lat:36.80, lon:137.30, hc:3, tide:"富山"},
+  {id:"himi",   name:"氷見（阿尾）",          lat:36.87, lon:136.98, hc:1, tide:"阿尾"},
+  {id:"fushiki",name:"伏木・新湊（高岡）",    lat:36.83, lon:137.10, hc:2, tide:"伏木"},
+  {id:"kurobe", name:"黒部（生地）",          lat:36.92, lon:137.44, hc:4, tide:"生地"},
+  {id:"asahi",  name:"朝日（宮崎）",          lat:36.97, lon:137.55, hc:5, tide:"宮崎"},
+];
+const TZ = "Asia/Tokyo";
+const FORECAST_DAYS = 7;
+
+// 判定しきい値（初心者向け）
+const WIND_GO=3.0, WIND_STOP=5.0, WAVE_STOP=0.5, OFFSHORE_MIN_WIND=2.0;
+// オフショア（陸→海）：富山湾は北向きに開く湾。陸は南側 → 南寄り(南東〜南西)の風が沖出し
+const OFFSHORE_FROM=[135,225];
+// 予報割れ判定：日中の「平均」風速差 > (DIV_BASE + DIV_PER_DAY × 何日先) で「割れ」。
+// 先の日ほど自然に差が開くので許容を広げ、本当に食い違う時だけ警告する。
+const DIV_BASE=2.5, DIV_PER_DAY=0.5;
+const THUNDER_CODES=[95,96,99];      // WMO 雷コード
+const CAPE_WATCH=1500;               // J/kg これ以上で大気不安定（補助情報）
+
+const COMPASS=['北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
+const WEEKDAY=['日','月','火','水','木','金','土'];
+
+//=================== ユーティリティ ===================
+function dirText(deg){ return COMPASS[Math.round(deg/22.5)%16]; }
+function isOffshore(deg){ return deg>=OFFSHORE_FROM[0] && deg<=OFFSHORE_FROM[1]; }
+function pad(n){ return String(n).padStart(2,'0'); }
+function jstDateParts(offsetDays=0){
+  const now=new Date(Date.now()+offsetDays*86400000);
+  const f=new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'});
+  const [y,m,d]=f.format(now).split('-');
+  return {y:+y,m:+m,d:+d,str:`${y}-${m}-${d}`};
+}
+function hourOf(iso){ return +iso.slice(11,13); }
+function dateOf(iso){ return iso.slice(0,10); }
+function hhmm(iso){ return iso.slice(11,16); }
+function weekdayOf(dateStr){ const [y,m,d]=dateStr.split('-').map(Number); return WEEKDAY[new Date(y,m-1,d).getDay()]; }
+function mdLabel(dateStr){ const [,m,d]=dateStr.split('-').map(Number); return `${m}/${d}`; }
+function dayLabel(off,dateStr){ return off===0?'今日':off===1?'明日':off===2?'明後日':`${mdLabel(dateStr)}`; }
+
+function windowIdx(times,dateStr,hStart,hEnd){
+  const idx=[];
+  for(let i=0;i<times.length;i++){
+    if(dateOf(times[i])!==dateStr) continue;
+    const h=hourOf(times[i]); if(h>=hStart&&h<=hEnd) idx.push(i);
+  }
+  return idx;
+}
+function maxAt(arr,idx){ let m=-Infinity,at=-1; for(const i of idx){const v=arr[i]; if(v!=null&&v>m){m=v;at=i;}} return {max:(m===-Infinity?null:m),at}; }
+
+//=================== データ取得 ===================
+async function getJSON(url){ const r=await fetch(url); if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); }
+async function fetchAll(spot){
+  const base=`latitude=${spot.lat}&longitude=${spot.lon}&timezone=${TZ}&forecast_days=${FORECAST_DAYS}`;
+  const wxUrl=`https://api.open-meteo.com/v1/forecast?${base}`
+    +`&hourly=wind_speed_10m,wind_direction_10m,weather_code&models=jma_seamless,gfs_seamless&wind_speed_unit=ms`;
+  const sunUrl=`https://api.open-meteo.com/v1/forecast?${base}&daily=sunrise,sunset&hourly=cape`;
+  const marUrl=`https://marine-api.open-meteo.com/v1/marine?${base}&hourly=wave_height,swell_wave_height,wave_period`;
+  const t=jstDateParts(0);
+  const tideUrl=`https://tide736.net/api/get_tide.php?pc=16&hc=${spot.hc}&yr=${t.y}&mn=${t.m}&dy=${t.d}&rg=week`;
+  const [wx,sun,mar,tide]=await Promise.all([
+    getJSON(wxUrl),getJSON(sunUrl),getJSON(marUrl),
+    getJSON(tideUrl).catch(e=>{console.warn("tide fail",e);return null;})
+  ]);
+  return {wx,sun,mar,tide};
+}
+
+//=================== 判定 ===================
+function assessDay(data,dayOffset){
+  const {wx,sun,mar,tide}=data;
+  const dateStr=jstDateParts(dayOffset).str;
+
+  const di=sun.daily.time.indexOf(dateStr);
+  const sunrise=di>=0?sun.daily.sunrise[di]:null, sunset=di>=0?sun.daily.sunset[di]:null;
+  const hStart=sunrise?hourOf(sunrise):5, hEnd=sunset?hourOf(sunset):19;
+
+  const wt=wx.hourly.time;
+  const wj=wx.hourly.wind_speed_10m_jma_seamless, wg=wx.hourly.wind_speed_10m_gfs_seamless;
+  const dj=wx.hourly.wind_direction_10m_jma_seamless;
+  const cj=wx.hourly.weather_code_jma_seamless, cg=wx.hourly.weather_code_gfs_seamless;
+  const widx=windowIdx(wt,dateStr,hStart,hEnd);
+
+  let windMax=-Infinity,windAt=-1,divSum=0,divN=0;
+  for(const i of widx){
+    const vj=wj[i]??0, vg=wg[i]??0, both=Math.max(vj,vg);
+    if(both>windMax){windMax=both;windAt=i;}
+    divSum+=Math.abs(vj-vg); divN++;
+  }
+  if(windMax===-Infinity) windMax=0;
+  const windDir=windAt>=0?dj[windAt]:0;
+  const offshore=isOffshore(windDir)&&windMax>=OFFSHORE_MIN_WIND;
+  const divAvg=divN?divSum/divN:0;
+  const divLimit=DIV_BASE+DIV_PER_DAY*dayOffset;
+  const lowConfidence=divAvg>divLimit;
+
+  let thunder=false;
+  for(const i of widx){ if(THUNDER_CODES.includes(cj[i])||THUNDER_CODES.includes(cg[i])){thunder=true;break;} }
+  let capeMax=null;
+  if(sun.hourly&&sun.hourly.cape){ const ci=windowIdx(sun.hourly.time,dateStr,hStart,hEnd); capeMax=maxAt(sun.hourly.cape,ci).max; }
+
+  const mt=mar.hourly.time, midx=windowIdx(mt,dateStr,hStart,hEnd);
+  const wave=maxAt(mar.hourly.wave_height,midx).max??0;
+  const swell=maxAt(mar.hourly.swell_wave_height,midx).max;
+  const swellP=maxAt(mar.hourly.wave_period,midx).max;
+
+  let tides=null;
+  if(tide&&tide.tide&&tide.tide.chart&&tide.tide.chart[dateStr]){
+    const c=tide.tide.chart[dateStr];
+    tides={flood:(c.flood||[]).map(x=>({time:x.time,cm:x.cm})), ebb:(c.edd||[]).map(x=>({time:x.time,cm:x.cm}))};
+  }
+
+  //=== 判定ロジック ===
+  let verdict,reasons=[];
+  if(thunder){ verdict="STOP"; reasons.push("雷の予報あり"); }
+  else{
+    const stop=[];
+    if(windMax>=WIND_STOP) stop.push(`風速${windMax.toFixed(1)}m/s（5以上）`);
+    if(wave>=WAVE_STOP)    stop.push(`波高${wave.toFixed(2)}m（0.5以上）`);
+    if(offshore)           stop.push(`オフショア（${dirText(windDir)}の風）`);
+    if(stop.length){ verdict="STOP"; reasons=stop; }
+    else if(windMax<=WIND_GO && wave<WAVE_STOP && !offshore){ verdict="GO"; reasons.push(`風${windMax.toFixed(1)}m/s・波${wave.toFixed(2)}m・沖出しなし`); }
+    else{ verdict="CAUTION"; reasons.push(`風${windMax.toFixed(1)}m/s・波${wave.toFixed(2)}m（境界域）`); }
+  }
+  let conf="";
+  if(lowConfidence){
+    conf=`予報が割れています（JMA系とGFS系の風速差 平均約${divAvg.toFixed(1)}m/s）。信頼度が低いため判定を一段厳しくしています。`;
+    if(verdict==="GO"){ verdict="CAUTION"; reasons.push("予報が割れているため安全側へ"); }
+  }
+
+  return {off:dayOffset,dateStr,verdict,reasons,conf,windMax,windDir,offshore,wave,swell,swellP,
+    thunder,capeMax,sunrise,sunset,hStart,hEnd,tides,lowConfidence,divAvg,
+    hourly:buildHourly(wt,wj,wg,dj,cj,cg,mt,mar,widx,midx,lowConfidence)};
+}
+
+// 時間ごとの判定（日単位と同じ基準。lowConf=その日が予報割れなら一段厳しく）
+function hourVerdict(w,wave,dir,thunder,lowConf){
+  if(thunder) return "STOP";
+  const off=isOffshore(dir)&&w>=OFFSHORE_MIN_WIND;
+  if(w>=WIND_STOP || (wave!=null&&wave>=WAVE_STOP) || off) return "STOP";
+  if(w<=WIND_GO && (wave==null||wave<WAVE_STOP) && !off) return lowConf?"CAUTION":"GO";
+  return "CAUTION";
+}
+
+function buildHourly(wt,wj,wg,dj,cj,cg,mt,mar,widx,midx,lowConf){
+  const rows=[], marByHour={};
+  for(const i of midx) marByHour[hourOf(mt[i])]=i;
+  for(const i of widx){
+    const h=hourOf(wt[i]); if(h%3!==0) continue;
+    const w=Math.max(wj[i]??0,wg[i]??0), mi=marByHour[h];
+    const wave=mi!=null?mar.hourly.wave_height[mi]:null;
+    const thunder=THUNDER_CODES.includes(cj[i])||THUNDER_CODES.includes(cg[i]);
+    rows.push({h,w,dir:dj[i],wave,thunder,verdict:hourVerdict(w,wave,dj[i],thunder,lowConf)});
+  }
+  return rows;
+}
+
+//=================== 描画 ===================
+const VLABEL={GO:"出られそう",CAUTION:"要確認",STOP:"やめる"};
+function escapeHtml(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+
+function renderDay(a,off){
+  const off2=a.offshore?`<span class="flag-off">沖出し⚠️</span>`:"陸向き/横（沖出しでない）";
+  const swellTxt=a.swell!=null?`${a.swell.toFixed(2)}m`:"—";
+  const periodTxt=a.swellP!=null?`${a.swellP.toFixed(0)}秒`:"—";
+  const sr=a.sunrise?hhmm(a.sunrise):"—", ss=a.sunset?hhmm(a.sunset):"—";
+  const capeTxt=a.capeMax!=null?`${Math.round(a.capeMax)} J/kg${a.capeMax>=CAPE_WATCH?'（大気不安定）':''}`:"—";
+
+  let tideHtml='<span style="color:var(--muted)">潮汐データ取得不可</span>';
+  if(a.tides){
+    const hi=a.tides.flood.map(x=>`<span class="hi">満 ${x.time.slice(0,5)} (${x.cm}cm)</span>`).join('');
+    const lo=a.tides.ebb.map(x=>`<span class="lo">干 ${x.time.slice(0,5)} (${x.cm}cm)</span>`).join('');
+    tideHtml=`<div class="tide-line">${hi}${lo}</div>`;
+  }
+  const rows=a.hourly.map(r=>{
+    const cls=(r.w>=WIND_STOP||(r.wave!=null&&r.wave>=WAVE_STOP)||r.thunder)?'warn':'';
+    return `<tr><td>${pad(r.h)}時</td><td><span class="hbadge ${r.verdict}">${r.verdict}</span></td>`
+      +`<td class="${cls}">${r.w.toFixed(1)}</td><td>${dirText(r.dir)}</td>`
+      +`<td class="${cls}">${r.wave!=null?r.wave.toFixed(2):'—'}</td><td>${r.thunder?'⚡':''}</td></tr>`;
+  }).join('');
+
+  return `
+  <div class="day">
+    <div class="day-head"><h2>${dayLabel(off,a.dateStr)}</h2><span class="day-date">${a.dateStr}（${weekdayOf(a.dateStr)}）</span></div>
+    <div class="verdict ${a.verdict}">
+      <div class="badge ${a.verdict}">${a.verdict}<small>${VLABEL[a.verdict]}</small></div>
+      <div class="verdict-text"><span class="why">${a.reasons.map(escapeHtml).join(' / ')}</span></div>
+    </div>
+    <div class="conf ${a.conf?'show':''}">${escapeHtml(a.conf)}</div>
+    <div class="grid">
+      <div class="cell"><p class="k">風速（日中最大・安全側）</p><p class="v">${a.windMax.toFixed(1)} <small>m/s</small></p></div>
+      <div class="cell"><p class="k">風向</p><p class="v" style="font-size:14px">${dirText(a.windDir)} <small>${off2}</small></p></div>
+      <div class="cell"><p class="k">波高（日中最大）</p><p class="v">${a.wave.toFixed(2)} <small>m</small></p></div>
+      <div class="cell"><p class="k">うねり（高さ／周期）</p><p class="v" style="font-size:14px">${swellTxt} <small>/ ${periodTxt}</small></p></div>
+      <div class="cell"><p class="k">日の出 / 日没</p><p class="v" style="font-size:14px">${sr} / ${ss}</p></div>
+      <div class="cell"><p class="k">雷 / 大気不安定</p><p class="v" style="font-size:14px">${a.thunder?'<span class="flag-off">雷予報⚡</span>':'なし'} <small>${capeTxt}</small></p></div>
+    </div>
+    <div class="tide-row"><p class="k">潮汐（${CURRENT.tide}）</p>${tideHtml}</div>
+    <details class="hourly">
+      <summary>日中の時間別（3時間ごと）</summary>
+      <div class="htable"><table>
+        <thead><tr><th>時刻</th><th>判定</th><th>風(m/s)</th><th>風向</th><th>波(m)</th><th>雷</th></tr></thead>
+        <tbody>${rows||'<tr><td colspan="6">データなし</td></tr>'}</tbody>
+      </table></div>
+    </details>
+  </div>`;
+}
+
+function renderCompact(a,off){
+  const offTxt=a.offshore?` <span class="flag-off">沖出し</span>`:'';
+  const tideTxt=a.tides
+    ? `満 ${a.tides.flood.map(x=>x.time.slice(0,5)).join('・')||'—'} ／ 干 ${a.tides.ebb.map(x=>x.time.slice(0,5)).join('・')||'—'}`
+    : '潮汐取得不可';
+  const conf=a.lowConfidence?` <span class="lc">⚠予報割れ</span>`:'';
+  const thunder=a.thunder?' ⚡雷':'';
+  return `
+  <div class="crow ${a.verdict}">
+    <div class="cdate">${mdLabel(a.dateStr)}<small>${weekdayOf(a.dateStr)}</small></div>
+    <div class="cbadge ${a.verdict}">${a.verdict}</div>
+    <div class="cstats">
+      <span class="lab">風</span>${a.windMax.toFixed(1)}m/s ${dirText(a.windDir)}${offTxt}　<span class="lab">波</span>${a.wave.toFixed(2)}m${thunder}${conf}<br>
+      <span class="lab">潮</span>${tideTxt}
+    </div>
+  </div>`;
+}
+
+let CURRENT = SPOTS[0];
+
+async function run(){
+  const content=document.getElementById('content');
+  content.innerHTML='<div class="loading"><div class="spinner"></div>データを取得しています…</div>';
+  try{
+    const data=await fetchAll(CURRENT);
+    let html=renderDay(assessDay(data,0),0)+renderDay(assessDay(data,1),1);
+    let rows='';
+    for(let off=2;off<FORECAST_DAYS;off++){ rows+=renderCompact(assessDay(data,off),off); }
+    if(rows) html+=`<div class="sectionhead">この先の見通し（${FORECAST_DAYS-2}日間・先ほど精度は下がります）</div>`+rows;
+    content.innerHTML=html;
+    const now=new Date().toLocaleString('ja-JP',{timeZone:TZ,hour:'2-digit',minute:'2-digit',month:'numeric',day:'numeric'});
+    document.getElementById('sub').textContent=
+      `${CURRENT.name}（${CURRENT.lat}°N, ${CURRENT.lon}°E）／潮汐：${CURRENT.tide}／更新 ${now}`;
+  }catch(e){
+    console.error(e);
+    content.innerHTML=`<div class="error">⚠️ データを取得できませんでした。<br>通信環境を確認して「更新」を押してください。<br><small>${escapeHtml(e.message||e)}</small></div>`;
+  }
+}
+
+//=================== 初期化 ===================
+(function init(){
+  const sel=document.getElementById('spot');
+  sel.innerHTML=SPOTS.map((s,i)=>`<option value="${i}">${s.name}</option>`).join('');
+  // 前回選択を復元
+  let saved=0;
+  try{ const v=localStorage.getItem('kayak_spot'); if(v!=null && SPOTS[+v]) saved=+v; }catch(e){}
+  sel.value=saved; CURRENT=SPOTS[saved];
+  sel.addEventListener('change',()=>{
+    CURRENT=SPOTS[+sel.value];
+    try{ localStorage.setItem('kayak_spot',sel.value); }catch(e){}
+    run();
+  });
+  document.getElementById('refreshBtn').addEventListener('click',run);
+  run();
+})();
+</script>
+</body>
+</html>

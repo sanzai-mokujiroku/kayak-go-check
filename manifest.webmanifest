@@ -1,0 +1,17 @@
+{
+  "name": "富山湾 出艇判断チェック",
+  "short_name": "出艇判断",
+  "description": "富山湾カヤックフィッシングの出艇判断（GO/CAUTION/STOP）簡易チェックツール",
+  "lang": "ja",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a3d62",
+  "theme_color": "#0a3d62",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
