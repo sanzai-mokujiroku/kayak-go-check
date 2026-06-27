@@ -1,7 +1,7 @@
 {
-  "name": "富山湾 出艇判断チェック",
+  "name": "カヤック出艇判断チェック",
   "short_name": "出艇判断",
-  "description": "富山湾カヤックフィッシングの出艇判断（GO/CAUTION/STOP）簡易チェックツール",
+  "description": "現在地のカヤック出艇判断（GO/CAUTION/STOP）を時間別に表示する簡易チェックツール",
   "lang": "ja",
   "start_url": "./index.html",
   "scope": "./",
