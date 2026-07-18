@@ -4,8 +4,21 @@
 <meta charset="UTF-8">
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>カヤック出艇判断チェック</title>
-<meta name="description" content="現在地のカヤック出艇判断（GO/CAUTION/STOP）を時間別に表示する簡易チェックツール">
+<title>カヤック出艇判断チェック｜風・波・雷でGO/STOP判定（現在地対応）</title>
+<meta name="description" content="現在地の風速・波高・雷から、カヤックで海に出られるか（GO/CAUTION/STOP）を時間別に判定する無料ツール。富山湾ほか全国対応。出艇前の安全確認に。">
+<link rel="canonical" href="https://sanzai-mokujiroku.github.io/kayak-go-check/">
+<!-- OGP（SNS共有時の見え方） -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="カヤック出艇判断チェック">
+<meta property="og:title" content="カヤック出艇判断チェック｜風・波・雷でGO/STOP判定">
+<meta property="og:description" content="現在地の風速・波高・雷から、カヤックで海に出られるかを時間別に判定する無料ツール。富山湾ほか全国対応。">
+<meta property="og:url" content="https://sanzai-mokujiroku.github.io/kayak-go-check/">
+<meta property="og:image" content="https://sanzai-mokujiroku.github.io/kayak-go-check/icon-512.png">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="カヤック出艇判断チェック｜風・波・雷でGO/STOP判定">
+<meta name="twitter:description" content="現在地の風速・波高・雷から、カヤックで海に出られるかを時間別に判定する無料ツール。富山湾ほか全国対応。">
+<meta name="twitter:image" content="https://sanzai-mokujiroku.github.io/kayak-go-check/icon-512.png">
 <meta name="theme-color" content="#0a3d62">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -13,6 +26,20 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="出艇判断">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "カヤック出艇判断チェック",
+  "url": "https://sanzai-mokujiroku.github.io/kayak-go-check/",
+  "description": "現在地の風速・波高・雷から、カヤックで海に出られるか（GO/CAUTION/STOP）を時間別に判定する無料ツール。富山湾ほか全国対応。",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web",
+  "inLanguage": "ja",
+  "isAccessibleForFree": true,
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "JPY" }
+}
+</script>
 <style>
   :root{
     --go:#1e9e54; --caution:#e6a100; --stop:#d63031;
