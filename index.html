@@ -119,6 +119,10 @@
   .disclaimer{background:#fff;border:1px solid var(--line);border-left:4px solid var(--stop);border-radius:10px;padding:12px 14px;font-size:12.5px;color:var(--ink);margin:14px 0 14px;line-height:1.7}
   .disclaimer b{color:var(--stop)}
   .credit{font-size:11px;color:var(--muted);text-align:center;line-height:1.8} .credit a{color:var(--muted)}
+  .relnav{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin:18px 0 10px}
+  .relnav .cap{width:100%;text-align:center;color:var(--muted);font-size:11px;margin-bottom:2px}
+  .relnav a{color:var(--accent);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px;text-decoration:none;font-weight:600;font-size:12px}
+  .relnav a:active{transform:scale(.97)}
   .loading,.error{text-align:center;padding:40px 16px;color:var(--muted)} .error{color:var(--stop)}
   .spinner{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
   @keyframes spin{to{transform:rotate(360deg)}}
@@ -155,6 +159,13 @@
   <div class="disclaimer">
     ⚠️ <b>これは個人が自分のために作った簡易ツールです。</b>精度の保証はできません。最終判断は、海快晴等の専門情報・現地での目視確認と合わせて、必ず<b>自己責任</b>で行ってください。
   </div>
+
+  <nav class="relnav">
+    <span class="cap">姉妹ツール・ブログ</span>
+    <a href="https://sanzai-mokujiroku.github.io/kayak-fish-forecast/">🎣 釣果予報</a>
+    <a href="https://sanzai-mokujiroku.github.io/kayak-fishing-log/">📓 釣行ログ</a>
+    <a href="https://kayak-papa.hatenablog.com/">📖 ブログ「散財黙示録」</a>
+  </nav>
 
   <p class="credit">
     気象・海象データ：Powered by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a>（<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>）<br>
