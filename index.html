@@ -5,19 +5,19 @@
 <meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>カヤック出艇判断チェック｜風・波・雷でGO/STOP判定（現在地対応）</title>
-<meta name="description" content="現在地の風速・波高・雷から、カヤックで海に出られるか（GO/CAUTION/STOP）を時間別に判定する無料ツール。富山湾ほか全国対応。出艇前の安全確認に。">
+<meta name="description" content="現在地の風速・波高・うねり・雷から、カヤックで海に出られるか（GO/CAUTION/STOP）を時間別に判定する無料ツール。富山湾ほか全国対応。出艇前の安全確認に。">
 <link rel="canonical" href="https://sanzai-mokujiroku.github.io/kayak-go-check/">
 <!-- OGP（SNS共有時の見え方） -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="カヤック出艇判断チェック">
 <meta property="og:title" content="カヤック出艇判断チェック｜風・波・雷でGO/STOP判定">
-<meta property="og:description" content="現在地の風速・波高・雷から、カヤックで海に出られるかを時間別に判定する無料ツール。富山湾ほか全国対応。">
+<meta property="og:description" content="現在地の風速・波高・うねり・雷から、カヤックで海に出られるかを時間別に判定する無料ツール。富山湾ほか全国対応。">
 <meta property="og:url" content="https://sanzai-mokujiroku.github.io/kayak-go-check/">
 <meta property="og:image" content="https://sanzai-mokujiroku.github.io/kayak-go-check/icon-512.png">
 <meta property="og:locale" content="ja_JP">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="カヤック出艇判断チェック｜風・波・雷でGO/STOP判定">
-<meta name="twitter:description" content="現在地の風速・波高・雷から、カヤックで海に出られるかを時間別に判定する無料ツール。富山湾ほか全国対応。">
+<meta name="twitter:description" content="現在地の風速・波高・うねり・雷から、カヤックで海に出られるかを時間別に判定する無料ツール。富山湾ほか全国対応。">
 <meta name="twitter:image" content="https://sanzai-mokujiroku.github.io/kayak-go-check/icon-512.png">
 <meta name="theme-color" content="#0a3d62">
 <link rel="manifest" href="manifest.webmanifest">
@@ -32,7 +32,7 @@
   "@type": "WebApplication",
   "name": "カヤック出艇判断チェック",
   "url": "https://sanzai-mokujiroku.github.io/kayak-go-check/",
-  "description": "現在地の風速・波高・雷から、カヤックで海に出られるか（GO/CAUTION/STOP）を時間別に判定する無料ツール。富山湾ほか全国対応。",
+  "description": "現在地の風速・波高・うねり・雷から、カヤックで海に出られるか（GO/CAUTION/STOP）を時間別に判定する無料ツール。富山湾ほか全国対応。",
   "applicationCategory": "UtilitiesApplication",
   "operatingSystem": "Web",
   "inLanguage": "ja",
@@ -119,6 +119,7 @@
   .badge.GO{background:var(--go)} .badge.CAUTION{background:var(--caution)} .badge.STOP{background:var(--stop)}
   .badge small{display:block;font-size:11px;font-weight:600;opacity:.9;margin-top:3px;letter-spacing:.02em}
   .verdict-text{font-size:13px;color:var(--ink)} .verdict-text .why{font-weight:700;font-size:13.5px}
+  .hitokoto{font-size:14.5px;font-weight:700;line-height:1.55;margin-bottom:6px}
   .advice{margin-top:7px;font-size:12.5px;color:#8a5a00;line-height:1.5}
   .advice.thunder{color:var(--stop);font-weight:700}
   .hwrap{padding:6px 8px 4px}
@@ -237,6 +238,7 @@
         <tr><th>風</th><td>風速3.0m/s以下でGO。5.0m/sを超えるとSTOP</td></tr>
         <tr><th>波</th><td>波高0.5mを超えるとSTOP</td></tr>
         <tr><th>雷</th><td>雷の予報（WMOコード95・96・99）が出ていればSTOP</td></tr>
+        <tr><th>うねり</th><td>周期8秒以上・高さ0.2m以上のうねりが入る時間は、ほかがGOでもCAUTIONに。沖では穏やかに見えても、浜に寄ると盛り上がって崩れるためです（富山湾では秋〜冬に「寄り回り波」が知られています）</td></tr>
         <tr><th>予報割れ</th><td>2種類の予報モデル（日本のJMA系と、アメリカのGFS系）を同時に取得し、両者の差が大きい時は「予報が割れている」と表示します</td></tr>
       </table>
       <p class="note">この数値は<b>カヤックを始めたばかりの人向けに、かなり厳しめ</b>に置いてあります。経験を積んだ人には「これくらい出られるだろう」と感じる日もSTOPになります。作者自身が初心者なので、まず安全側に倒す設計にしています。</p>
@@ -272,7 +274,7 @@
   <p class="credit">
     気象・海象データ：Powered by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a>（<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>）<br>
     潮汐データ：<a href="https://tide736.net/" target="_blank" rel="noopener">tide736.net</a>（気象庁 潮位表をもとに算出）<br>
-    <span style="opacity:.7">版 2026-10-09 v3（週間一覧・行ける時間・風向き・共有）</span>
+    <span style="opacity:.7">版 2026-10-23 v4（ひとこと・うねりの周期）</span>
   </p>
 </div>
 
@@ -307,6 +309,7 @@ const DEFAULT_LOC = {lat:36.80, lon:137.20, name:"富山湾（既定）"};
 
 // 判定しきい値（初心者向け）
 const WIND_GO=3.0, WIND_STOP=5.0, WAVE_STOP=0.5;
+const SWELL_PERIOD=8.0, SWELL_MIN=0.2;          // 周期8秒以上・高さ0.2m以上のうねり＝浜で波が立つおそれ（GO→CAUTION）
 const THUNDER_CODES=[95,96,99];                  // WMO 雷コード
 const DIV_BASE=2.5, DIV_PER_DAY=0.5;             // 予報割れ（JMA系 vs GFS系）判定
 
@@ -348,7 +351,7 @@ async function fetchWeather(lat,lon){
   const base=`latitude=${lat}&longitude=${lon}&timezone=${TZ}&forecast_days=${FORECAST_DAYS}`;
   const wxUrl=`https://api.open-meteo.com/v1/forecast?${base}`
     +`&hourly=wind_speed_10m,wind_direction_10m,weather_code&models=jma_seamless,gfs_seamless&wind_speed_unit=ms`;
-  const marUrl=`https://marine-api.open-meteo.com/v1/marine?${base}&hourly=wave_height`;
+  const marUrl=`https://marine-api.open-meteo.com/v1/marine?${base}&hourly=wave_height,swell_wave_height,swell_wave_period`;
   const [wx,mar]=await Promise.all([getJSON(wxUrl),getJSON(marUrl).catch(e=>{console.warn("marine fail",e);return null;})]);
   return {wx,mar};
 }
@@ -370,12 +373,14 @@ function idxAt(times,dateStr,h){
   for(let i=0;i<times.length;i++){ if(dateOf(times[i])===dateStr && hourOf(times[i])===h) return i; }
   return -1;
 }
-function hourVerdict(w,wave,thunder){
+function hourVerdict(w,wave,thunder,longSwell){
   if(thunder) return "STOP";
   if(w>=WIND_STOP || (wave!=null&&wave>=WAVE_STOP)) return "STOP";
-  if(w<=WIND_GO && (wave==null||wave<WAVE_STOP)) return "GO";
+  if(w<=WIND_GO && (wave==null||wave<WAVE_STOP) && !longSwell) return "GO";
   return "CAUTION";
 }
+// 周期の長いうねりか（沖では小さく見えても、浜に寄ると盛り上がって崩れる）
+function isLongSwell(sh,sp){ return sh!=null && sp!=null && sp>=SWELL_PERIOD && sh>=SWELL_MIN; }
 const RANK={GO:0,CAUTION:1,STOP:2};
 
 function assessDay(data,dayOffset){
@@ -386,6 +391,7 @@ function assessDay(data,dayOffset){
   const dj=wx.hourly.wind_direction_10m_jma_seamless;
   const cj=wx.hourly.weather_code_jma_seamless, cg=wx.hourly.weather_code_gfs_seamless;
   const mt=mar?mar.hourly.time:[], mwave=mar?mar.hourly.wave_height:[];
+  const mswh=mar&&mar.hourly.swell_wave_height?mar.hourly.swell_wave_height:[], mswp=mar&&mar.hourly.swell_wave_period?mar.hourly.swell_wave_period:[];
 
   const rows=[]; let divSum=0,divN=0;
   for(const h of activeHours()){
@@ -395,8 +401,10 @@ function assessDay(data,dayOffset){
     divSum+=Math.abs(vj-vg); divN++;
     const mi=mt.length?idxAt(mt,dateStr,h):-1;
     const wave=mi>=0?mwave[mi]:null;
+    const sh=mi>=0?(mswh[mi]??null):null, sp=mi>=0?(mswp[mi]??null):null;
+    const swell=isLongSwell(sh,sp);
     const thunder=THUNDER_CODES.includes(cj[i])||THUNDER_CODES.includes(cg[i]);
-    rows.push({h,w,dir:dj[i],wave,thunder,off:offshoreLevel(dj[i]),verdict:hourVerdict(w,wave,thunder)});
+    rows.push({h,w,dir:dj[i],wave,sh,sp,swell,thunder,off:offshoreLevel(dj[i]),verdict:hourVerdict(w,wave,thunder,swell)});
   }
 
   // 予報割れ（信頼度）
@@ -424,6 +432,9 @@ function assessDay(data,dayOffset){
   if(thunderHours.length) reasons.push("雷の予報あり");
   if(maxWind>=WIND_STOP) reasons.push(`最大風速${maxWind.toFixed(1)}m/s（5以上）`);
   if(anyWave&&maxWave>=WAVE_STOP) reasons.push(`最大波高${maxWave.toFixed(2)}m（0.5以上）`);
+  const swellRows=rows.filter(r=>r.swell);
+  const maxSwellPeriod=swellRows.reduce((m,r)=>Math.max(m,r.sp),0);
+  if(swellRows.length) reasons.push(`周期の長いうねり（最大${maxSwellPeriod.toFixed(0)}秒）`);
   if(!reasons.length){
     if(overall==="GO") reasons.push(`風${maxWind.toFixed(1)}m/s・波${anyWave?maxWave.toFixed(2)+'m':'—'}と穏やか`);
     else reasons.push(`風${maxWind.toFixed(1)}m/s・波${anyWave?maxWave.toFixed(2)+'m':'—'}（境界域・要確認）`);
@@ -438,7 +449,7 @@ function assessDay(data,dayOffset){
   }
 
   return {dayOffset,dateStr,rows,overall,maxWind,maxWave,anyWave,retreat,thunderHours,reasons,
-    lowConfidence,divAvg,tides};
+    lowConfidence,divAvg,tides,swellRows,maxSwellPeriod};
 }
 
 //=================== 描画 ===================
@@ -449,6 +460,23 @@ function tideTypeOf(data,dateStr){
 }
 function escapeHtml(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
 
+// その日の海を、落ち着いた一言で（判定そのものは変えない）
+function hitokoto(a){
+  const offAny=a.rows.some(r=>r.off===2);
+  if(a.thunderHours.length) return "雷の日は海に出ない。理由はいりません。";
+  if(a.overall==="STOP"){
+    if(a.maxWind>=WIND_STOP) return "漕いで帰れなくなる風です。今日は道具の手入れの日に。";
+    return "波が高く、出るのも上がるのも危ない海です。今日は見送りましょう。";
+  }
+  if(a.swellRows.length) return "沖は穏やかに見えても、浜で波が立ちやすい日。出る瞬間と上がる瞬間に気をつけて。";
+  if(a.lowConfidence) return "予報が当てになりにくい日。現地で海を見て、迷ったらやめる。";
+  if(offAny) return "弱く見えても沖へ流される風。今日は岸から離れすぎないこと。";
+  if(a.overall==="CAUTION") return "初心者には強めの風。出るなら岸の近くだけにして、早めに戻りましょう。";
+  if(a.retreat!=null) return `午前勝負の日。${a.retreat}時より前に、岸へ向かって漕ぎ始めましょう。`;
+  if(a.maxWind<1.0) return "ほぼ無風で、漕ぐのは楽な日。そのぶん艇が流れにくく、流し釣りは少し物足りないかもしれません。";
+  return "漕ぎやすく、流し釣りにもちょうどいい風。それでも、現地で海を見てから決めましょう。";
+}
+
 function renderDay(a){
   if(a.overall==null){
     return `<div class="day"><div class="loading">この日の予報データがありません。</div></div>`;
@@ -457,10 +485,11 @@ function renderDay(a){
     const wcls=r.w>=WIND_STOP?'warn':''; const vcls=(r.wave!=null&&r.wave>=WAVE_STOP)?'warn':'';
     const bolt=r.thunder?' <span class="bolt">⚡雷</span>':'';
     const offTxt=r.off===2?' <span class="offshore">沖向き</span>':(r.off===1?' <span class="offshore" style="opacity:.75">やや沖向き</span>':'');
+    const swellTxt=r.swell?` <span class="offshore">うねり${r.sp.toFixed(0)}秒</span>`:'';
     const waveTxt=r.wave!=null?`${r.wave.toFixed(1)}`:'—';
     return `<div class="hrow ${r.verdict}">
       <div class="htime">${pad(r.h)}時</div>
-      <div class="hvals"><span class="lab">風</span> <span class="${wcls}">${r.w.toFixed(1)}<small>m/s</small></span> ${dirText(r.dir)}　<span class="lab">波</span> <span class="${vcls}">${waveTxt}${r.wave!=null?'<small>m</small>':''}</span>${bolt}${offTxt}</div>
+      <div class="hvals"><span class="lab">風</span> <span class="${wcls}">${r.w.toFixed(1)}<small>m/s</small></span> ${dirText(r.dir)}　<span class="lab">波</span> <span class="${vcls}">${waveTxt}${r.wave!=null?'<small>m</small>':''}</span>${bolt}${offTxt}${swellTxt}</div>
       <div class="hbadge ${r.verdict}">${r.verdict}</div>
     </div>`;
   }).join('');
@@ -474,6 +503,9 @@ function renderDay(a){
     advice+=`<div class="advice">※ ${a.retreat}時以降は条件が悪化します。出艇するなら${a.retreat}時より前（午前中など）に切り上げを。</div>`;
   } else if(a.overall==="GO"){
     advice+=`<div class="advice">${MY_FROM}〜${MY_TO}時を通して比較的穏やかな見込みです。</div>`;
+  }
+  if(a.swellRows.length){
+    advice+=`<div class="advice">🌊 周期${a.maxSwellPeriod.toFixed(0)}秒前後の<b>うねり</b>が入る予報です。沖では小さく見えても、浜に寄ると盛り上がって崩れます。出艇・着岸の瞬間に、波をかぶらないように。</div>`;
   }
   const offRows=a.rows.filter(r=>r.off===2);
   if(offRows.length){
@@ -498,6 +530,7 @@ function renderDay(a){
     <div class="verdict ${a.overall}">
       <div class="badge ${a.overall}">${a.overall}<small>${VLABEL[a.overall]}</small></div>
       <div class="verdict-text">
+        <div class="hitokoto">${escapeHtml(hitokoto(a))}</div>
         <div class="why">総合判断：${a.reasons.map(escapeHtml).join(' / ')}</div>
         ${advice}
       </div>
@@ -519,9 +552,10 @@ function renderWeek(data){
     const waveTxt=a.anyWave? `${a.maxWave.toFixed(2)}m` : '—';
     const offMax=a.rows.some(r=>r.off===2)?'／<span class="offshore">沖向きの風あり</span>':'';
     const bolt=a.thunderHours.length?'／⚡雷':'';
+    const swellW=a.swellRows.length?`／<span class="offshore">うねり${a.maxSwellPeriod.toFixed(0)}秒</span>`:'';
     rows.push(`<div class="wrow ${a.overall}">
       <div class="wday">${mdLabel(a.dateStr)}<small>${weekdayOf(a.dateStr)}曜${tt?'・'+escapeHtml(tt):''}</small></div>
-      <div class="wvals">風 <b>${a.maxWind.toFixed(1)}</b>m/s ／ 波 <b>${waveTxt}</b>${bolt}${offMax}${a.lowConfidence?'<br><small>予報が割れています</small>':''}</div>
+      <div class="wvals">風 <b>${a.maxWind.toFixed(1)}</b>m/s ／ 波 <b>${waveTxt}</b>${bolt}${offMax}${swellW}${a.lowConfidence?'<br><small>予報が割れています</small>':''}</div>
       <div class="wbadge ${a.overall}">${a.overall}</div>
     </div>`);
   }
@@ -541,9 +575,10 @@ function shareTextDay(off){
   const tt=tideTypeOf(DATA,a.dateStr);
   const lines=[];
   lines.push(`【${mdjp(a.dateStr)}(${weekdayOf(a.dateStr)}) ${MY_FROM}〜${MY_TO}時】${a.overall}（${VLABEL[a.overall]}）`);
+  lines.push(hitokoto(a));
   lines.push(`風 最大${a.maxWind.toFixed(1)}m/s ／ 波 最大${a.anyWave?a.maxWave.toFixed(2)+'m':'—'}${tt?' ／ '+tt:''}`);
   for(const r of a.rows){
-    lines.push(`${pad(r.h)}時 風${r.w.toFixed(1)}m/s ${dirText(r.dir)}${r.off===2?'(沖向き)':''} 波${r.wave!=null?r.wave.toFixed(2)+'m':'—'} ${r.verdict}`);
+    lines.push(`${pad(r.h)}時 風${r.w.toFixed(1)}m/s ${dirText(r.dir)}${r.off===2?'(沖向き)':''} 波${r.wave!=null?r.wave.toFixed(2)+'m':'—'}${r.swell?' うねり'+r.sp.toFixed(0)+'秒':''} ${r.verdict}`);
   }
   if(a.thunderHours.length) lines.push(`⚡雷の予報：${a.thunderHours.map(h=>pad(h)+'時台').join('・')}`);
   lines.push('— カヤック出艇判断チェック https://sanzai-mokujiroku.github.io/kayak-go-check/');
