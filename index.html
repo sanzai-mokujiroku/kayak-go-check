@@ -20,6 +20,9 @@
 <meta name="twitter:description" content="現在地の風速・波高・うねり・雷から、カヤックで海に出られるかを時間別に判定する無料ツール。富山湾ほか全国対応。">
 <meta name="twitter:image" content="https://sanzai-mokujiroku.github.io/kayak-go-check/icon-512.png">
 <meta name="theme-color" content="#0a3d62">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@800&display=swap&text=%E3%82%A7%E3%82%AB%E3%82%AF%E3%83%81%E3%83%83%E3%83%A4%E5%87%BA%E5%88%A4%E6%96%AD%E8%89%87">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -56,7 +59,8 @@
   }
   .wrap{max-width:560px;margin:0 auto;padding:16px 14px 40px}
   header.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
-  header.top h1{font-size:18px;margin:0;letter-spacing:.02em}
+  header.top h1{font-family:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;font-weight:800;
+    font-size:21px;margin:0;letter-spacing:.05em;color:#0a2540}
   .refresh{
     border:1px solid var(--line);background:var(--card);color:var(--accent);
     border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;
@@ -101,7 +105,8 @@
   .sharebar button{flex:1;border:1px solid var(--line);background:#fff;color:var(--accent);
     border-radius:10px;padding:9px 6px;font-size:12.5px;font-weight:800;cursor:pointer}
   .sharebar button:active{background:var(--go-bg)}
-  .offshore{color:var(--stop);font-weight:700}
+  .offshore{color:#b85c00;font-weight:700;white-space:nowrap}
+  .swell{color:#0a6cb3;font-weight:700;white-space:nowrap}
   .legend{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:0 0 14px}
   .legend span{display:inline-flex;align-items:center;gap:4px}
   .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
@@ -118,6 +123,11 @@
   .badge.CAUTION{font-size:18px;letter-spacing:0}
   .badge.GO{background:var(--go)} .badge.CAUTION{background:var(--caution)} .badge.STOP{background:var(--stop)}
   .badge small{display:block;font-size:11px;font-weight:600;opacity:.9;margin-top:3px;letter-spacing:.02em}
+  @media (max-width:520px){
+    .verdict{flex-direction:column;gap:10px}
+    .badge{display:inline-flex;align-items:baseline;gap:8px;min-width:0;padding:8px 14px}
+    .badge small{display:inline;margin:0;font-size:12px}
+  }
   .verdict-text{font-size:13px;color:var(--ink)} .verdict-text .why{font-weight:700;font-size:13.5px}
   .hitokoto{font-size:14.5px;font-weight:700;line-height:1.55;margin-bottom:6px}
   .advice{margin-top:7px;font-size:12.5px;color:#8a5a00;line-height:1.5}
@@ -126,15 +136,19 @@
   .hrow{display:grid;grid-template-columns:54px 1fr auto;gap:10px;align-items:center;
     padding:9px 8px;border-bottom:1px solid var(--line)}
   .hrow:last-child{border-bottom:none}
-  .hrow.STOP{background:#fdf4f4}
+  .htags{display:flex;flex-wrap:wrap;gap:2px 10px;font-size:11.5px;margin-top:2px}
   .htime{font-size:14px;font-weight:700}
   .hvals{font-size:13px;color:var(--ink);line-height:1.35}
   .hvals .lab{color:var(--muted);font-size:11px}
   .hvals small{color:var(--muted);font-weight:500}
   .hvals .warn{color:var(--stop);font-weight:700}
   .hvals .bolt{color:var(--stop);font-weight:700}
-  .hbadge{display:inline-block;font-size:12px;font-weight:800;color:#fff;border-radius:7px;padding:5px 11px;letter-spacing:.03em;min-width:74px;text-align:center}
-  .hbadge.GO{background:var(--go)} .hbadge.CAUTION{background:var(--caution)} .hbadge.STOP{background:var(--stop)}
+  /* 時間ごとの判定は控えめに（大きな札は総合判断だけ） */
+  .hbadge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:800;letter-spacing:.02em;min-width:76px;justify-content:flex-start}
+  .hbadge::before{content:"";width:9px;height:9px;border-radius:50%;flex:none}
+  .hbadge.GO{color:var(--go)} .hbadge.GO::before{background:var(--go)}
+  .hbadge.CAUTION{color:#9a6b00} .hbadge.CAUTION::before{background:var(--caution)}
+  .hbadge.STOP{color:var(--stop)} .hbadge.STOP::before{background:var(--stop)}
   .tide-row{padding:11px 14px;background:var(--card);border-top:1px solid var(--line);font-size:13px}
   .tide-row .k{font-size:11px;color:var(--muted);margin:0 0 4px}
   .tide-line{display:flex;flex-wrap:wrap;gap:6px 14px}
@@ -170,7 +184,7 @@
 <body>
 <div class="wrap">
   <header class="top">
-    <h1>🛶 カヤック出艇判断チェック</h1>
+    <h1>カヤック出艇判断チェック</h1>
     <button class="refresh" id="refreshBtn">↻ 更新</button>
   </header>
 
@@ -274,7 +288,7 @@
   <p class="credit">
     気象・海象データ：Powered by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a>（<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>）<br>
     潮汐データ：<a href="https://tide736.net/" target="_blank" rel="noopener">tide736.net</a>（気象庁 潮位表をもとに算出）<br>
-    <span style="opacity:.7">版 2026-10-23 v4（ひとこと・うねりの周期）</span>
+    <span style="opacity:.7">版 2026-10-23 v5（見た目の整理・ひとこと・うねりの周期）</span>
   </p>
 </div>
 
@@ -483,13 +497,14 @@ function renderDay(a){
   }
   const rowsHtml=a.rows.map(r=>{
     const wcls=r.w>=WIND_STOP?'warn':''; const vcls=(r.wave!=null&&r.wave>=WAVE_STOP)?'warn':'';
-    const bolt=r.thunder?' <span class="bolt">⚡雷</span>':'';
-    const offTxt=r.off===2?' <span class="offshore">沖向き</span>':(r.off===1?' <span class="offshore" style="opacity:.75">やや沖向き</span>':'');
-    const swellTxt=r.swell?` <span class="offshore">うねり${r.sp.toFixed(0)}秒</span>`:'';
+    const bolt=r.thunder?'<span class="bolt">⚡雷</span>':'';
+    const offTxt=r.off===2?'<span class="offshore">沖向きの風</span>':(r.off===1?'<span class="offshore" style="opacity:.75">やや沖向きの風</span>':'');
+    const swellTxt=r.swell?`<span class="swell">うねり${r.sp.toFixed(0)}秒</span>`:'';
+    const tags=(bolt||offTxt||swellTxt)?`<div class="htags">${bolt}${offTxt}${swellTxt}</div>`:'';
     const waveTxt=r.wave!=null?`${r.wave.toFixed(1)}`:'—';
     return `<div class="hrow ${r.verdict}">
       <div class="htime">${pad(r.h)}時</div>
-      <div class="hvals"><span class="lab">風</span> <span class="${wcls}">${r.w.toFixed(1)}<small>m/s</small></span> ${dirText(r.dir)}　<span class="lab">波</span> <span class="${vcls}">${waveTxt}${r.wave!=null?'<small>m</small>':''}</span>${bolt}${offTxt}${swellTxt}</div>
+      <div class="hvals"><span class="lab">風</span> <span class="${wcls}">${r.w.toFixed(1)}<small>m/s</small></span> ${dirText(r.dir)}　<span class="lab">波</span> <span class="${vcls}">${waveTxt}${r.wave!=null?'<small>m</small>':''}</span>${tags}</div>
       <div class="hbadge ${r.verdict}">${r.verdict}</div>
     </div>`;
   }).join('');
@@ -552,7 +567,7 @@ function renderWeek(data){
     const waveTxt=a.anyWave? `${a.maxWave.toFixed(2)}m` : '—';
     const offMax=a.rows.some(r=>r.off===2)?'／<span class="offshore">沖向きの風あり</span>':'';
     const bolt=a.thunderHours.length?'／⚡雷':'';
-    const swellW=a.swellRows.length?`／<span class="offshore">うねり${a.maxSwellPeriod.toFixed(0)}秒</span>`:'';
+    const swellW=a.swellRows.length?`／<span class="swell">うねり${a.maxSwellPeriod.toFixed(0)}秒</span>`:'';
     rows.push(`<div class="wrow ${a.overall}">
       <div class="wday">${mdLabel(a.dateStr)}<small>${weekdayOf(a.dateStr)}曜${tt?'・'+escapeHtml(tt):''}</small></div>
       <div class="wvals">風 <b>${a.maxWind.toFixed(1)}</b>m/s ／ 波 <b>${waveTxt}</b>${bolt}${offMax}${swellW}${a.lowConfidence?'<br><small>予報が割れています</small>':''}</div>
