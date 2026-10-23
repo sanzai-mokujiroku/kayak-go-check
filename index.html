@@ -190,6 +190,14 @@
   .loading,.error{text-align:center;padding:40px 16px;color:var(--muted)} .error{color:var(--stop)}
   .spinner{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
   @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* 姉妹ツール：アプリアイコンを並べる */
+  .sisters{margin:26px 0 12px;text-align:center}
+  .sisters-cap{font-size:11.5px;color:#67778a;margin:0 0 10px;letter-spacing:.04em}
+  .sisters-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:330px;margin:0 auto}
+  .sisters-row a{display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;color:#1c2733;font-size:12px;font-weight:700}
+  .sisters-row img{width:58px;height:58px;border-radius:14px;box-shadow:0 2px 6px rgba(12,40,79,.25)}
+  .sisters .blog-link{display:inline-block;margin-top:16px;padding:10px 18px;border-radius:999px;background:#0c284f;color:#fff;text-decoration:none;font-size:12.5px;font-weight:700}
 </style>
 </head>
 <body>
@@ -292,18 +300,20 @@
     </div>
   </details>
 
-  <nav class="relnav">
-    <span class="cap">姉妹ツール・ブログ</span>
-    <a href="https://sanzai-mokujiroku.github.io/kayak-fish-forecast/">🎣 釣果予報</a>
-    <a href="https://sanzai-mokujiroku.github.io/kayak-fishing-log/">📓 釣行ログ</a>
-    <a href="https://sanzai-mokujiroku.github.io/kayak-depth-map/">🗺️ 水深マップ</a>
-    <a href="https://kayak-papa.hatenablog.com/">📖 ブログ「散財黙示録」</a>
+  <nav class="sisters" aria-label="姉妹ツールとブログ">
+    <p class="sisters-cap">富山湾カヤックの、姉妹ツール</p>
+    <div class="sisters-row">
+      <a href="https://sanzai-mokujiroku.github.io/kayak-fish-forecast/"><img src="https://sanzai-mokujiroku.github.io/kayak-fish-forecast/icon-180.png" alt="" width="58" height="58" loading="lazy">釣果予報</a>
+      <a href="https://sanzai-mokujiroku.github.io/kayak-fishing-log/"><img src="https://sanzai-mokujiroku.github.io/kayak-fishing-log/icon-180.png" alt="" width="58" height="58" loading="lazy">釣行ログ</a>
+      <a href="https://sanzai-mokujiroku.github.io/kayak-depth-map/"><img src="https://sanzai-mokujiroku.github.io/kayak-depth-map/icon-180.png" alt="" width="58" height="58" loading="lazy">水深マップ</a>
+    </div>
+    <a class="blog-link" href="https://kayak-papa.hatenablog.com/">ブログ「富山湾カヤック釣行 散財黙示録」を読む</a>
   </nav>
 
   <p class="credit">
     気象・海象データ：Powered by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a>（<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>）<br>
     潮汐データ：<a href="https://tide736.net/" target="_blank" rel="noopener">tide736.net</a>（気象庁 潮位表をもとに算出）<br>
-    <span style="opacity:.7">版 2026-10-23 v8（紺の帯とカヤック・新しいアイコン）</span>
+    <span style="opacity:.7">版 2026-10-23 v9（姉妹ツールをアイコンで・紺の帯とカヤック）</span>
   </p>
 </div>
 
