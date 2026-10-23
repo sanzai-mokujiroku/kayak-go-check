@@ -19,7 +19,7 @@
 <meta name="twitter:title" content="カヤック出艇判断チェック｜風・波・雷でGO/STOP判定">
 <meta name="twitter:description" content="現在地の風速・波高・うねり・雷から、カヤックで海に出られるかを時間別に判定する無料ツール。富山湾ほか全国対応。">
 <meta name="twitter:image" content="https://sanzai-mokujiroku.github.io/kayak-go-check/icon-512.png">
-<meta name="theme-color" content="#0a3d62">
+<meta name="theme-color" content="#0e294e">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@800&display=swap&text=%E3%82%A7%E3%82%AB%E3%82%AF%E3%83%81%E3%83%83%E3%83%A4%E5%87%BA%E5%88%A4%E6%96%AD%E8%89%87">
@@ -49,6 +49,7 @@
     --go-bg:#e8f7ee; --caution-bg:#fdf4e0; --stop-bg:#fdecec;
     --bg:#f3f6f9; --card:#ffffff; --ink:#1c2733; --muted:#67778a;
     --line:#e2e8f0; --accent:#0a3d62;
+    --kon:#0e294e;   /* アプリアイコンと同じ紺 */
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0}
@@ -73,6 +74,16 @@
   .locbtn{border:1px solid var(--line);background:var(--card);color:var(--accent);border-radius:999px;
     padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
   .locbtn:active{transform:scale(.97)}
+  /* 上部の紺の帯（アプリアイコンと同じ紺地に若草のカヤック） */
+  .hero{position:relative;overflow:hidden;background:var(--kon);color:#fff;
+    margin:-16px -14px 16px;padding:18px 16px 14px;border-radius:0 0 22px 22px}
+  .hero-art{position:absolute;right:-10px;top:44px;width:138px;height:auto;pointer-events:none}
+  .hero header.top{position:relative;margin-bottom:6px}
+  .hero header.top h1{color:#fff}
+  .hero-lead{position:relative;margin:0 0 12px;min-height:84px;font-size:13px;line-height:1.6;color:#c9d6e6;max-width:58%}
+  .hero .locbar{position:relative;margin:0;color:#c9d6e6;background:#16365f;border-radius:12px;padding:8px 10px}
+  .hero .locbar .loc b{color:#fff}
+  .hero .refresh,.hero .locbtn{background:#1d4374;border-color:#3a6296;color:#fff}
   .locwarn{color:var(--stop)}
   .tabs{display:flex;gap:8px;margin:0 0 14px}
   .tabs button{
@@ -80,7 +91,7 @@
     border-radius:12px;padding:10px 4px;font-size:14px;font-weight:700;cursor:pointer;line-height:1.2
   }
   .tabs button small{display:block;font-size:11px;font-weight:500;margin-top:1px;color:var(--muted)}
-  .tabs button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .tabs button.active{background:var(--kon);color:#fff;border-color:var(--kon)}
   .tabs button.active small{color:#cfe0ee}
   .settings{display:flex;flex-direction:column;gap:6px;margin:-6px 0 14px}
   .set-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
@@ -183,14 +194,17 @@
 </head>
 <body>
 <div class="wrap">
-  <header class="top">
-    <h1>カヤック出艇判断チェック</h1>
-    <button class="refresh" id="refreshBtn">↻ 更新</button>
-  </header>
-
-  <div class="locbar">
-    <div class="loc" id="locText">現在地を取得しています…</div>
-    <button class="locbtn" id="locBtn">📍 現在地</button>
+  <div class="hero">
+    <img class="hero-art" src="hero-kayak.webp" alt="" width="320" height="264">
+    <header class="top">
+      <h1>カヤック出艇判断チェック</h1>
+      <button class="refresh" id="refreshBtn">↻ 更新</button>
+    </header>
+    <p class="hero-lead">風・波・うねり・雷から、<br>今日、海に出られるかを。</p>
+    <div class="locbar">
+      <div class="loc" id="locText">現在地を取得しています…</div>
+      <button class="locbtn" id="locBtn">📍 現在地</button>
+    </div>
   </div>
 
   <div class="tabs" id="tabs">
@@ -289,7 +303,7 @@
   <p class="credit">
     気象・海象データ：Powered by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a>（<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>）<br>
     潮汐データ：<a href="https://tide736.net/" target="_blank" rel="noopener">tide736.net</a>（気象庁 潮位表をもとに算出）<br>
-    <span style="opacity:.7">版 2026-10-23 v7（新しいアプリアイコン・水深マップへのリンク）</span>
+    <span style="opacity:.7">版 2026-10-23 v8（紺の帯とカヤック・新しいアイコン）</span>
   </p>
 </div>
 
