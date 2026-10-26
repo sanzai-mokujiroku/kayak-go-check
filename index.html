@@ -45,135 +45,155 @@
 </script>
 <style>
   :root{
-    --go:#1e9e54; --caution:#e6a100; --stop:#d63031;
-    --go-bg:#e8f7ee; --caution-bg:#fdf4e0; --stop-bg:#fdecec;
-    --bg:#f3f6f9; --card:#ffffff; --ink:#1c2733; --muted:#67778a;
-    --line:#e2e8f0; --accent:#0a3d62;
-    --kon:#0e294e;   /* アプリアイコンと同じ紺 */
+    /* 色：地は海辺の薄い灰青、文字は紺寄りの墨。色はデータ（GO/要確認/STOP）にだけ使う */
+    --ground:#f3f5f8; --surface:#ffffff; --border:#e2e7ed; --rule:#edf1f5; --control:#cfd6de;
+    --text:#0f1d2e; --muted:#536170; --kon:#0e294e; --sakura:#e0628f;
+    --go:#247b50;   --go-bg:#dcf5e6;   --go-ink:#0b3d22;
+    --caution:#9a5b00; --caution-bg:#fff4d6; --caution-ink:#6b3f00;
+    --stop:#c4242a; --stop-bg:#ffe7e4; --stop-ink:#7d1a1d;
+    /* 旧名（下の共通部品が使う） */
+    --bg:var(--ground); --card:var(--surface); --ink:var(--text); --line:var(--border); --accent:var(--kon);
+    --r-card:10px; --r-ctrl:8px;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0}
   body{
-    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",Meiryo,sans-serif;
-    background:var(--bg); color:var(--ink); line-height:1.6;
-    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP",Meiryo,sans-serif;
+    background:var(--ground); color:var(--text); line-height:1.6; font-size:14px;
+    padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
-  .wrap{max-width:560px;margin:0 auto;padding:16px 14px 40px}
-  header.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
-  header.top h1{font-family:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;font-weight:800;
-    font-size:21px;margin:0;letter-spacing:.05em;color:#0a2540}
-  .refresh{
-    border:1px solid var(--line);background:var(--card);color:var(--accent);
-    border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;
-    display:inline-flex;align-items:center;gap:6px;white-space:nowrap
-  }
-  .refresh:active{transform:scale(.97)}
-  .locbar{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:12.5px;color:var(--muted)}
+  .num{font-variant-numeric:tabular-nums}
+  button{font:inherit;touch-action:manipulation}
+  button:focus-visible,select:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--kon);outline-offset:2px}
+  /* 上の帯：名前と場所だけ */
+  .bar{background:var(--kon);color:#fff;padding:calc(env(safe-area-inset-top) + 10px) 16px 10px}
+  .bar-in{max-width:560px;margin:0 auto;display:flex;align-items:center;gap:10px}
+  .mark{width:30px;height:30px;border-radius:8px;flex:none}
+  .bar h1{font-family:"Shippori Mincho B1","Hiragino Mincho ProN",serif;font-weight:800;font-size:19px;margin:0;letter-spacing:.04em;flex:1}
+  .bar h1 small{display:block;font-family:-apple-system,"Hiragino Sans",sans-serif;font-weight:500;font-size:11px;color:#b9c8da;letter-spacing:0;margin-top:1px}
+  .barbtn{background:transparent;border:1px solid #3c5f8c;color:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+  .barbtn:hover{border-color:#7f9cc2}
+  .wrap{max-width:560px;margin:0 auto;padding:12px 16px 40px}
+  .locbar{display:flex;align-items:center;gap:8px;margin:0 0 12px;font-size:12.5px;color:var(--muted)}
   .locbar .loc{flex:1;line-height:1.45}
-  .locbar .loc b{color:var(--ink);font-weight:600}
-  .locbtn{border:1px solid var(--line);background:var(--card);color:var(--accent);border-radius:999px;
-    padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
-  .locbtn:active{transform:scale(.97)}
-  /* 上部の紺の帯（アプリアイコンと同じ紺地に桜色のカヤック） */
-  .hero{position:relative;overflow:hidden;background:var(--kon);color:#fff;
-    margin:-16px -14px 16px;padding:18px 16px 14px;border-radius:0 0 22px 22px}
-  .hero-art{position:absolute;right:-10px;top:44px;width:138px;height:auto;pointer-events:none}
-  .hero header.top{position:relative;margin-bottom:6px}
-  .hero header.top h1{color:#fff}
-  .hero-lead{position:relative;margin:0 0 12px;min-height:84px;font-size:13px;line-height:1.6;color:#c9d6e6;max-width:58%}
-  .hero .locbar{position:relative;margin:0;color:#c9d6e6;background:#16365f;border-radius:12px;padding:8px 10px}
-  .hero .locbar .loc b{color:#fff}
-  .hero .refresh,.hero .locbtn{background:#1d4374;border-color:#3a6296;color:#fff}
+  .locbar .loc b{color:var(--text);font-weight:600}
+  .locbtn{border:1px solid var(--control);background:var(--surface);color:var(--text);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+  .locbtn:hover{border-color:#9aa6b3}
   .locwarn{color:var(--stop)}
-  .tabs{display:flex;gap:8px;margin:0 0 14px}
-  .tabs button{
-    flex:1;border:1px solid var(--line);background:var(--card);color:var(--muted);
-    border-radius:12px;padding:10px 4px;font-size:14px;font-weight:700;cursor:pointer;line-height:1.2
-  }
-  .tabs button small{display:block;font-size:11px;font-weight:500;margin-top:1px;color:var(--muted)}
-  .tabs button.active{background:var(--kon);color:#fff;border-color:var(--kon)}
-  .tabs button.active small{color:#cfe0ee}
-  .settings{display:flex;flex-direction:column;gap:6px;margin:-6px 0 14px}
-  .set-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-  .set-cap{font-size:11px;color:var(--muted);min-width:64px}
-  .settings select{border:1px solid var(--line);background:#fff;color:inherit;border-radius:8px;padding:5px 6px;font-size:12.5px;font-weight:700}
-  .set-sep{font-size:12px;color:var(--muted)}
-  .set-note{font-size:11px;color:var(--muted)}
-  /* 週間一覧 */
-  .week{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden}
-  .wrow{display:flex;align-items:center;gap:8px;padding:10px 12px;border-top:1px solid var(--line);font-size:13px}
-  .wrow:first-child{border-top:0}
-  .wrow.GO{background:var(--go-bg)} .wrow.CAUTION{background:var(--caution-bg)} .wrow.STOP{background:#fdf4f4}
-  .wday{width:74px;font-weight:800}
-  .wday small{display:block;font-size:10px;font-weight:500;color:var(--muted)}
-  .wvals{flex:1;color:var(--muted);font-size:12px;line-height:1.5}
-  .wvals b{color:inherit;font-weight:700}
-  .wbadge{font-size:11px;font-weight:800;color:#fff;border-radius:999px;padding:3px 9px}
-  .wbadge.GO{background:var(--go)} .wbadge.CAUTION{background:var(--caution)} .wbadge.STOP{background:var(--stop)}
-  .weekcap{font-size:12px;color:var(--muted);margin:0 0 8px}
-  /* 共有ボタン */
-  .sharebar{display:flex;gap:8px;margin:12px 0 0}
-  .sharebar button{flex:1;border:1px solid var(--line);background:#fff;color:var(--accent);
-    border-radius:10px;padding:9px 6px;font-size:12.5px;font-weight:800;cursor:pointer}
-  .sharebar button:active{background:var(--go-bg)}
-  .offshore{color:#b85c00;font-weight:700;white-space:nowrap}
-  .swell{color:#0a6cb3;font-weight:700;white-space:nowrap}
-  .legend{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:0 0 14px}
-  .legend span{display:inline-flex;align-items:center;gap:4px}
-  .dot{width:10px;height:10px;border-radius:3px;display:inline-block}
-  .day{
-    background:var(--card);border:1px solid var(--line);border-radius:16px;
-    padding:0;margin-bottom:16px;overflow:hidden;box-shadow:0 1px 2px rgba(16,42,67,.04)
-  }
-  .day-head{display:flex;align-items:baseline;gap:8px;padding:14px 16px 0;flex-wrap:wrap}
-  .day-head h2{font-size:17px;margin:0}
+  /* 日付：ひとつの区切り付きコントロール */
+  .tabs{display:grid;grid-template-columns:repeat(4,1fr);background:#e6ebf0;border-radius:var(--r-ctrl);padding:3px;margin:0 0 10px}
+  .tabs button{border:0;background:transparent;color:var(--muted);border-radius:6px;padding:7px 2px;font-size:13.5px;font-weight:700;cursor:pointer;line-height:1.2}
+  .tabs button small{display:block;font-size:11px;font-weight:500;margin-top:1px}
+  .tabs button:hover{color:var(--text)}
+  .tabs button.active{background:var(--surface);color:var(--text);box-shadow:0 1px 2px rgba(15,29,46,.08)}
+  .settings{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin:0 0 14px;font-size:12.5px;color:var(--muted)}
+  .set-row{display:flex;align-items:center;gap:5px}
+  .settings select{border:1px solid var(--control);background:var(--surface);color:var(--text);border-radius:6px;padding:4px 6px;font-size:12.5px;font-weight:600}
+  .set-note{display:none}
+  /* その日のカード */
+  .day{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);margin-bottom:14px;overflow:hidden}
+  .day-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:14px 16px 0}
+  .day-head h2{font-size:17px;font-weight:700;margin:0}
   .day-date{color:var(--muted);font-size:12px}
-  .verdict{margin:12px 16px 0;border-radius:14px;padding:16px;display:flex;align-items:flex-start;gap:14px}
-  .verdict.GO{background:var(--go-bg)} .verdict.CAUTION{background:var(--caution-bg)} .verdict.STOP{background:var(--stop-bg)}
-  .badge{font-size:24px;font-weight:800;letter-spacing:.02em;color:#fff;border-radius:12px;padding:10px 12px;min-width:112px;text-align:center;line-height:1.1;flex:none;white-space:nowrap}
-  .badge.CAUTION{font-size:18px;letter-spacing:0}
-  .badge.GO{background:var(--go)} .badge.CAUTION{background:var(--caution)} .badge.STOP{background:var(--stop)}
-  .badge small{display:block;font-size:11px;font-weight:600;opacity:.9;margin-top:3px;letter-spacing:.02em}
-  @media (max-width:520px){
-    .verdict{flex-direction:column;gap:10px}
-    .badge{display:inline-flex;align-items:baseline;gap:8px;min-width:0;padding:8px 14px}
-    .badge small{display:inline;margin:0;font-size:12px}
-  }
-  .verdict-text{font-size:13px;color:var(--ink)} .verdict-text .why{font-weight:700;font-size:13.5px}
-  .hitokoto{font-size:14.5px;font-weight:700;line-height:1.55;margin-bottom:6px}
-  .advice{margin-top:7px;font-size:12.5px;color:#8a5a00;line-height:1.5}
-  .advice.thunder{color:var(--stop);font-weight:700}
-  .hwrap{padding:6px 8px 4px}
-  .hrow{display:grid;grid-template-columns:54px 1fr auto;gap:10px;align-items:center;
-    padding:9px 8px;border-bottom:1px solid var(--line)}
-  .hrow:last-child{border-bottom:none}
-  .htags{display:flex;flex-wrap:wrap;gap:2px 10px;font-size:11.5px;margin-top:2px}
-  .htime{font-size:14px;font-weight:700}
-  .hvals{font-size:13px;color:var(--ink);line-height:1.35}
-  .hvals .lab{color:var(--muted);font-size:11px}
-  .hvals small{color:var(--muted);font-weight:500}
-  .hvals .warn{color:var(--stop);font-weight:700}
-  .hvals .bolt{color:var(--stop);font-weight:700}
-  /* 時間ごとの判定は控えめに（大きな札は総合判断だけ） */
-  .hbadge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:800;letter-spacing:.02em;min-width:76px;justify-content:flex-start}
-  .hbadge::before{content:"";width:9px;height:9px;border-radius:50%;flex:none}
-  .hbadge.GO{color:var(--go)} .hbadge.GO::before{background:var(--go)}
-  .hbadge.CAUTION{color:#9a6b00} .hbadge.CAUTION::before{background:var(--caution)}
-  .hbadge.STOP{color:var(--stop)} .hbadge.STOP::before{background:var(--stop)}
-  .tide-row{padding:11px 14px;background:var(--card);border-top:1px solid var(--line);font-size:13px}
-  .tide-row .k{font-size:11px;color:var(--muted);margin:0 0 4px}
-  .tide-line{display:flex;flex-wrap:wrap;gap:6px 14px}
-  .tide-line span{white-space:nowrap} .tide-line .hi{color:#0a6cb3;font-weight:600} .tide-line .lo{color:#b06a00;font-weight:600}
-  .conf{margin:10px 16px 0;font-size:12px;color:#8a5a00;background:#fff7e6;border:1px solid #ffe2a8;border-radius:10px;padding:8px 10px;display:none}
+  /* 答え：一番大きく */
+  .answer{padding:10px 16px 14px}
+  .aw{display:flex;align-items:baseline;gap:10px}
+  .aw b{font-size:32px;line-height:1.1;font-weight:800;letter-spacing:.01em}
+  .aw span{font-size:16px;font-weight:700}
+  .answer.GO .aw{color:var(--go)} .answer.CAUTION .aw{color:var(--caution)} .answer.STOP .aw{color:var(--stop)}
+  .hitokoto{font-size:15.5px;font-weight:600;line-height:1.6;margin:6px 0 0;color:var(--text)}
+  /* 数字の列：基準と並べる */
+  .facts{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  .fact{padding:10px 12px;border-left:1px solid var(--rule)}
+  .fact:first-child{border-left:0}
+  .fact .k{font-size:11.5px;color:var(--muted)}
+  .fact .v{font-size:20px;font-weight:700;line-height:1.25}
+  .fact .v small{font-size:12px;font-weight:500;color:var(--muted);margin-left:2px}
+  .fact .v.over{color:var(--stop)}
+  .fact .c{font-size:11px;color:var(--muted)}
+  @media (max-width:420px){ .facts{grid-template-columns:repeat(2,1fr)} .fact:nth-child(3){border-left:0} .fact:nth-child(n+3){border-top:1px solid var(--rule)} }
+  /* この道具だけの部品：一日の帯 */
+  .strip{padding:12px 16px 4px}
+  .strip .k{font-size:12px;color:var(--muted);margin:0 0 6px;display:flex;justify-content:space-between}
+  .cells{display:flex;gap:2px}
+  .cell{flex:1;min-width:0;text-align:center}
+  .cell i{display:block;height:28px;border-radius:3px}
+  .cell.GO i{background:#5bb784} .cell.CAUTION i{background:#f0b84a} .cell.STOP i{background:#e5767a}
+  .cell span{display:block;font-size:10.5px;color:var(--muted);margin-top:3px}
+  .cell.bolt i{background-image:repeating-linear-gradient(135deg,transparent 0 4px,rgba(0,0,0,.18) 4px 6px)}
+  /* 注意（一行ずつ） */
+  .notes{padding:6px 16px 12px;display:flex;flex-direction:column;gap:6px}
+  .note{font-size:13px;line-height:1.6;padding:8px 10px;border-radius:6px;background:var(--caution-bg);color:var(--caution-ink)}
+  .note.stop{background:var(--stop-bg);color:var(--stop-ink);font-weight:600}
+  .note.calm{background:var(--go-bg);color:var(--go-ink)}
+  .conf{margin:0 16px 12px;font-size:12.5px;color:var(--caution-ink);background:var(--caution-bg);border:1px solid #f4d48a;border-radius:6px;padding:8px 10px;display:none}
   .conf.show{display:block}
-  .disclaimer{background:#fff;border:1px solid var(--line);border-left:4px solid var(--stop);border-radius:10px;padding:12px 14px;font-size:12.5px;color:var(--ink);margin:14px 0 14px;line-height:1.7}
+  /* 時間ごとの表 */
+  .hwrap{border-top:1px solid var(--rule)}
+  .hhead,.hrow{display:grid;grid-template-columns:48px 1fr 56px 52px 76px;gap:6px;align-items:center;padding:0 16px}
+  .hhead{font-size:11.5px;color:var(--muted);padding-top:8px;padding-bottom:4px}
+  .hhead .r,.hrow .r{text-align:right}
+  .hrow{min-height:44px;border-top:1px solid var(--rule);font-size:14px}
+  .htime{font-weight:700}
+  .hrow .unit{font-size:11px;color:var(--muted);margin-left:1px}
+  .hrow .over{color:var(--stop);font-weight:700}
+  .hdir{color:var(--muted);font-size:13px}
+  .htags{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12px;margin:-6px 0 8px}
+  .htags .t-bolt{color:var(--stop-ink);font-weight:700} .htags .t-off{color:var(--caution-ink);font-weight:600} .htags .t-swell{color:#0a5a96;font-weight:600}
+  .pill{justify-self:end;display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px;white-space:nowrap}
+  .pill.GO{background:var(--go-bg);color:var(--go-ink)} .pill.CAUTION{background:var(--caution-bg);color:var(--caution-ink)} .pill.STOP{background:var(--stop-bg);color:var(--stop-ink)}
+  /* 潮 */
+  .tide-row{padding:10px 16px;border-top:1px solid var(--rule);font-size:13px}
+  .tide-row .k{font-size:11.5px;color:var(--muted);margin:0 0 3px}
+  .tide-line{display:flex;flex-wrap:wrap;gap:4px 14px}
+  .tide-line span{white-space:nowrap} .tide-line b{font-weight:700;margin-right:4px}
+  .tide-line .hi b{color:#0a5a96} .tide-line .lo b{color:#8a5a00}
+  /* 共有 */
+  .sharebar{border-top:1px solid var(--rule);padding:4px 8px}
+  .sharebar button{width:100%;border:0;background:transparent;color:var(--kon);padding:10px 6px;font-size:13px;font-weight:700;cursor:pointer;border-radius:6px}
+  .sharebar button:hover{background:var(--ground)}
+  /* 週間 */
+  .weekcap{font-size:12.5px;color:var(--muted);margin:6px 16px 8px}
+  .week{border-top:1px solid var(--rule)}
+  .wrow{display:grid;grid-template-columns:64px 1fr 1fr 76px;gap:6px;align-items:center;min-height:48px;padding:0 16px;border-top:1px solid var(--rule);font-size:14px}
+  .wrow:first-child{border-top:0}
+  .whead{font-size:11.5px;color:var(--muted);min-height:30px}
+  .wday{font-weight:700;line-height:1.3}
+  .wday small{display:block;font-size:11px;font-weight:500;color:var(--muted)}
+  .wrow .r{text-align:right}
+  .wrow .over{color:var(--stop);font-weight:700}
+  .wsub{grid-column:1/-1;font-size:12px;color:var(--muted);margin:-8px 0 8px}
+  .wbadge{justify-self:end}
+
+  /* 答え：判定の色の面 */
+  .answer{margin:12px 12px 0;border-radius:8px;padding:14px 16px 16px;color:#fff}
+  .answer.GO{background:#1f7a4d} .answer.CAUTION{background:#a35f00} .answer.STOP{background:#b3261e}
+  .answer.GO .aw,.answer.CAUTION .aw,.answer.STOP .aw{color:#fff}
+  .aw b{font-size:44px;letter-spacing:.02em}
+  .aw span{font-size:17px;opacity:.95}
+  .answer .hitokoto{color:#fff;font-size:16px;margin-top:8px}
+  .facts{margin-top:12px}
+  /* 一日の海（この道具だけのグラフ） */
+  .sea{padding:12px 16px 6px}
+  .sea .k{font-size:12px;color:var(--muted);margin:0 0 4px;display:flex;justify-content:space-between;gap:8px}
+  .sea svg{display:block;width:100%;height:auto;overflow:visible}
+  .sea .lg{display:flex;gap:12px;font-size:11.5px;color:var(--muted);margin:2px 0 0}
+  .sea .lg i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:4px;border-radius:2px}
+  /* 時間ごとの数字（たたむ） */
+  details.hours>summary{list-style:none;cursor:pointer;padding:12px 16px;font-size:13.5px;font-weight:700;color:var(--kon);border-top:1px solid var(--rule)}
+  details.hours>summary::-webkit-details-marker{display:none}
+  details.hours>summary::after{content:"＋";float:right;color:var(--muted);font-weight:400}
+  details.hours[open]>summary::after{content:"−"}
+  .offshore{color:var(--caution-ink);font-weight:600;white-space:nowrap}
+  .swell{color:#0a5a96;font-weight:600;white-space:nowrap}
+  .disclaimer{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:12px 14px;font-size:12.5px;color:var(--text);margin:14px 0;line-height:1.7}
   .disclaimer b{color:var(--stop)}
   .credit{font-size:11px;color:var(--muted);text-align:center;line-height:1.8} .credit a{color:var(--muted)}
   .relnav{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin:18px 0 10px}
   .relnav .cap{width:100%;text-align:center;color:var(--muted);font-size:11px;margin-bottom:2px}
   .relnav a{color:var(--accent);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px;text-decoration:none;font-weight:600;font-size:12px}
   .relnav a:active{transform:scale(.97)}
-  .guide{background:var(--card);border:1px solid var(--line);border-radius:16px;margin:16px 0;overflow:hidden}
+  .guide{background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);margin:14px 0;overflow:hidden}
   .guide>summary{padding:13px 15px;font-weight:700;font-size:13.5px;color:var(--ink);cursor:pointer;list-style:none}
   .guide>summary::-webkit-details-marker{display:none}
   .guide>summary::after{content:"＋";float:right;color:var(--muted);font-weight:400}
@@ -201,43 +221,28 @@
 </style>
 </head>
 <body>
+<div class="bar"><div class="bar-in">
+  <img class="mark" src="icon-192.png" alt="" width="30" height="30">
+  <h1>出艇判断<small>風・波・うねり・雷で、今日出ていいか</small></h1>
+  <button class="barbtn" id="refreshBtn" type="button">更新</button>
+</div></div>
 <div class="wrap">
-  <div class="hero">
-    <img class="hero-art" src="hero-kayak.webp" alt="" width="320" height="264">
-    <header class="top">
-      <h1>カヤック出艇判断チェック</h1>
-      <button class="refresh" id="refreshBtn">↻ 更新</button>
-    </header>
-    <p class="hero-lead">風・波・うねり・雷から、<br>今日、海に出られるかを。</p>
-    <div class="locbar">
-      <div class="loc" id="locText">現在地を取得しています…</div>
-      <button class="locbtn" id="locBtn">📍 現在地</button>
-    </div>
+  <div class="locbar">
+    <div class="loc" id="locText">現在地を取得しています…</div>
+    <button class="locbtn" id="locBtn" type="button">現在地にする</button>
   </div>
 
-  <div class="tabs" id="tabs">
-    <button data-off="0" class="active">今日<small id="lab0"></small></button>
-    <button data-off="1">明日<small id="lab1"></small></button>
-    <button data-off="2">明後日<small id="lab2"></small></button>
-    <button data-off="week">週間<small>先10日</small></button>
+  <div class="tabs" id="tabs" role="tablist">
+    <button data-off="0" class="active" type="button">今日<small id="lab0"></small></button>
+    <button data-off="1" type="button">明日<small id="lab1"></small></button>
+    <button data-off="2" type="button">明後日<small id="lab2"></small></button>
+    <button data-off="week" type="button">週間<small>10日先まで</small></button>
   </div>
 
   <div class="settings" id="settings">
-    <div class="set-row">
-      <span class="set-cap">行ける時間</span>
-      <select id="myFrom"></select><span class="set-sep">〜</span><select id="myTo"></select>
-    </div>
-    <div class="set-row">
-      <span class="set-cap">海はどっち</span>
-      <select id="seaDir"></select>
-      <span class="set-note">沖に流される風（陸からの風）を教えます</span>
-    </div>
-  </div>
-
-  <div class="legend">
-    <span><i class="dot" style="background:var(--go)"></i>GO 出られそう</span>
-    <span><i class="dot" style="background:var(--caution)"></i>CAUTION 要確認</span>
-    <span><i class="dot" style="background:var(--stop)"></i>STOP やめる</span>
+    <label class="set-row">行ける時間 <select id="myFrom" aria-label="行ける時間（から）"></select>〜<select id="myTo" aria-label="行ける時間（まで）"></select></label>
+    <label class="set-row">海の向き <select id="seaDir" aria-label="海はどっちの方角か"></select></label>
+    <span class="set-note">沖に流される風（陸からの風）を教えます</span>
   </div>
 
   <div id="content">
@@ -254,12 +259,12 @@
 
       <h3>使い方</h3>
       <ol>
-        <li><b>「📍 現在地」を押す</b>。その海域の風・波・雷の予報を自動で取得します（位置情報は端末の中だけで使い、どこにも送信しません）。</li>
+        <li><b>「現在地にする」を押す</b>。その海域の風・波・雷の予報を自動で取得します（位置情報は端末の中だけで使い、どこにも送信しません）。</li>
         <li><b>日付を選ぶ</b>。今日・明日・明後日の3日分。</li>
         <li><b>時間ごとの判定を見る</b>。「行ける時間」で選んだ時間帯が、1時間ごとに GO / CAUTION / STOP で並びます（初期設定は6〜16時）。</li>
         <li><b>「週間」タブ</b>で、これから10日ぶんの判定を一覧できます。予定を立てるとき、同行者に相談するときに。</li>
         <li><b>「海はどっち」を設定する</b>と、<b>陸から海へ吹く風（沖に流される向き）</b>の時間帯を教えます。富山湾なら「北」です。風が弱くても、沖向きの風の日は岸との距離に注意してください。</li>
-        <li><b>📋コピーのボタン</b>で、判定をそのまま文章にしてコピーできます。LINEなどで同行者に送れます。</li>
+        <li><b>「この日の判定をコピー」</b>で、判定をそのまま文章にしてコピーできます。LINEなどで同行者に送れます。</li>
       </ol>
 
       <h3>三段階の意味</h3>
@@ -313,7 +318,7 @@
   <p class="credit">
     気象・海象データ：Powered by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a>（<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>）<br>
     潮汐データ：<a href="https://tide736.net/" target="_blank" rel="noopener">tide736.net</a>（気象庁 潮位表をもとに算出）<br>
-    <span style="opacity:.7">版 2026-10-26 v12（サイト名を「カヤック釣りの無料ツール」に）</span>
+    <span style="opacity:.7">版 2026-10-27 v13（画面を一新：判定の色の面・一日の海のグラフ〈風・波・潮〉・数字の表はたたむ）</span>
   </p>
 </div>
 
@@ -484,7 +489,8 @@ function assessDay(data,dayOffset){
   const tide=data.tide;
   if(tide&&tide.tide&&tide.tide.chart&&tide.tide.chart[dateStr]){
     const c=tide.tide.chart[dateStr];
-    tides={flood:(c.flood||[]).map(x=>({time:x.time,cm:x.cm})), ebb:(c.edd||[]).map(x=>({time:x.time,cm:x.cm}))};
+    tides={flood:(c.flood||[]).map(x=>({time:x.time,cm:x.cm})), ebb:(c.edd||[]).map(x=>({time:x.time,cm:x.cm})),
+      curve:(c.tide||[]).map(x=>({t:+x.time.slice(0,2)+(+x.time.slice(3,5))/60, cm:x.cm}))};
   }
 
   return {dayOffset,dateStr,rows,overall,maxWind,maxWave,anyWave,retreat,thunderHours,reasons,
@@ -493,6 +499,7 @@ function assessDay(data,dayOffset){
 
 //=================== 描画 ===================
 const VLABEL={GO:"出られそう",CAUTION:"要確認",STOP:"やめる"};
+const VSHORT={GO:"GO",CAUTION:"要確認",STOP:"STOP"};
 function tideTypeOf(data,dateStr){
   const c=data&&data.tide&&data.tide.tide&&data.tide.tide.chart&&data.tide.tide.chart[dateStr];
   return c&&c.moon&&c.moon.title ? c.moon.title : '';
@@ -516,69 +523,132 @@ function hitokoto(a){
   return "漕ぎやすく、流し釣りにもちょうどいい風。それでも、現地で海を見てから決めましょう。";
 }
 
+
+// 一日の海：風速の線・波高の棒・判定の帯を、同じ時刻の位置にそろえて描く
+function seaChart(a){
+  const R=a.rows; if(!R.length) return '';
+  const X0=30, X1=336, n=R.length, st=(X1-X0)/n, cx=i=>X0+st*(i+.5);
+  const wMax=Math.max(6,Math.ceil(a.maxWind+1)), WY0=14, WY1=92, wy=v=>WY1-(Math.min(v,wMax)/wMax)*(WY1-WY0);
+  const vMax=Math.max(1,Math.ceil(((a.anyWave?a.maxWave:0)+.2)*2)/2), VY0=112, VY1=160, vy=v=>VY1-(Math.min(v,vMax)/vMax)*(VY1-VY0);
+  const t=(x,y,str,anc='end',col='#536170',sz=10)=>`<text x="${x}" y="${y}" font-size="${sz}" fill="${col}" text-anchor="${anc}" font-family="-apple-system,Hiragino Sans,sans-serif">${str}</text>`;
+  let g='';
+  // 風：STOPの領域・基準線
+  g+=`<rect x="${X0}" y="${WY0}" width="${X1-X0}" height="${wy(WIND_STOP)-WY0}" fill="#c4242a" opacity=".07"/>`;
+  g+=`<line x1="${X0}" x2="${X1}" y1="${wy(WIND_STOP)}" y2="${wy(WIND_STOP)}" stroke="#c4242a" stroke-dasharray="4 3" stroke-width="1"/>`;
+  g+=`<line x1="${X0}" x2="${X1}" y1="${wy(WIND_GO)}" y2="${wy(WIND_GO)}" stroke="#247b50" stroke-dasharray="4 3" stroke-width="1"/>`;
+  g+=t(X0-4,wy(WIND_STOP)+3,WIND_STOP)+t(X0-4,wy(WIND_GO)+3,WIND_GO)+t(X0-4,WY1+3,0);
+  g+=t(X0,WY0-4,'風速 m/s','start','#0f1d2e',10.5)+t(X1,wy(WIND_STOP)-3,'これより上はSTOP','end','#c4242a',9.5);
+  g+=`<line x1="${X0}" x2="${X1}" y1="${WY1}" y2="${WY1}" stroke="#e2e7ed"/>`;
+  const pts=R.map((r,i)=>`${cx(i).toFixed(1)},${wy(r.w).toFixed(1)}`).join(' ');
+  g+=`<polyline points="${pts}" fill="none" stroke="#0e294e" stroke-width="2.2" stroke-linejoin="round"/>`;
+  R.forEach((r,i)=>{ g+=`<circle cx="${cx(i).toFixed(1)}" cy="${wy(r.w).toFixed(1)}" r="2.6" fill="${r.w>=WIND_STOP?'#c4242a':'#0e294e'}"/>`; });
+  // 波：棒と基準線
+  g+=t(X0,VY0-4,'波高 m','start','#0f1d2e',10.5);
+  R.forEach((r,i)=>{ if(r.wave==null) return; const h=VY1-vy(r.wave); g+=`<rect x="${(cx(i)-st*.28).toFixed(1)}" y="${vy(r.wave).toFixed(1)}" width="${(st*.56).toFixed(1)}" height="${h.toFixed(1)}" rx="1.5" fill="${r.wave>=WAVE_STOP?'#c4242a':'#6f9bc6'}"/>`; });
+  g+=`<line x1="${X0}" x2="${X1}" y1="${vy(WAVE_STOP)}" y2="${vy(WAVE_STOP)}" stroke="#c4242a" stroke-dasharray="4 3" stroke-width="1"/>`;
+  g+=t(X0-4,vy(WAVE_STOP)+3,WAVE_STOP)+t(X0-4,VY1+3,0);
+  g+=`<line x1="${X0}" x2="${X1}" y1="${VY1}" y2="${VY1}" stroke="#e2e7ed"/>`;
+  // 潮：同じ時刻の並びに、線1本と満潮・干潮だけ
+  const TY0=180, TY1=210; let SY=170, H=206;
+  const tc=a.tides&&a.tides.curve||[];
+  if(tc.length){
+    const lo=R[0].h-.5, hi=R[R.length-1].h+.5, xt=v=>X0+st*(v-R[0].h+.5);
+    const inW=tc.filter(p=>p.t>=lo&&p.t<=hi);
+    if(inW.length>1){
+      const mn=Math.min(...tc.map(p=>p.cm)), mx=Math.max(...tc.map(p=>p.cm)), ty=v=>TY1-((v-mn)/Math.max(1,mx-mn))*(TY1-TY0);
+      g+=t(X0,TY0-6,'潮の高さ','start','#0f1d2e',10.5);
+      const d='M'+inW.map(p=>`${xt(p.t).toFixed(1)},${ty(p.cm).toFixed(1)}`).join(' L');
+      g+=`<path d="${d} L${xt(inW[inW.length-1].t).toFixed(1)},${TY1} L${xt(inW[0].t).toFixed(1)},${TY1} Z" fill="#6f9bc6" opacity=".18"/><path d="${d}" fill="none" stroke="#2f6ea8" stroke-width="1.8"/>`;
+      const mark=(arr,lab)=>arr.forEach(x=>{ const v=+x.time.slice(0,2)+(+x.time.slice(3,5))/60; if(v<lo||v>hi) return; const X=xt(v), Y=ty(x.cm);
+        g+=`<circle cx="${X.toFixed(1)}" cy="${Y.toFixed(1)}" r="2.6" fill="#2f6ea8"/>`+t(Math.min(X1-14,Math.max(X0+14,X)),Y-6,`${lab}${x.time.slice(0,5)}`,'middle','#2f6ea8',9.5); });
+      mark(a.tides.flood,'満'); mark(a.tides.ebb,'干');
+      g+=`<line x1="${X0}" x2="${X1}" y1="${TY1}" y2="${TY1}" stroke="#e2e7ed"/>`;
+      SY=220; H=256;
+    }
+  }
+  // 判定の帯
+  const C={GO:'#3f9f6b',CAUTION:'#e0a028',STOP:'#d65a5f'};
+  R.forEach((r,i)=>{ g+=`<rect x="${(X0+st*i+1).toFixed(1)}" y="${SY}" width="${(st-2).toFixed(1)}" height="16" rx="2" fill="${C[r.verdict]}"/>`;
+    if(r.thunder) g+=t(cx(i),SY+12,'雷','middle','#fff',9);
+    g+=t(cx(i),SY+30,r.h,'middle'); });
+  g+=t(X0-4,SY+12,'判定');
+  return `<svg viewBox="0 0 340 ${H}" role="img" aria-label="時間ごとの風速と波高、判定">${g}</svg>`;
+}
+
 function renderDay(a){
   if(a.overall==null){
     return `<div class="day"><div class="loading">この日の予報データがありません。</div></div>`;
   }
+  // 時間ごとの表
   const rowsHtml=a.rows.map(r=>{
-    const wcls=r.w>=WIND_STOP?'warn':''; const vcls=(r.wave!=null&&r.wave>=WAVE_STOP)?'warn':'';
-    const bolt=r.thunder?'<span class="bolt">⚡雷</span>':'';
-    const offTxt=r.off===2?'<span class="offshore">沖向きの風</span>':(r.off===1?'<span class="offshore" style="opacity:.75">やや沖向きの風</span>':'');
-    const swellTxt=r.swell?`<span class="swell">うねり${r.sp.toFixed(0)}秒</span>`:'';
-    const tags=(bolt||offTxt||swellTxt)?`<div class="htags">${bolt}${offTxt}${swellTxt}</div>`:'';
-    const waveTxt=r.wave!=null?`${r.wave.toFixed(1)}`:'—';
-    return `<div class="hrow ${r.verdict}">
-      <div class="htime">${pad(r.h)}時</div>
-      <div class="hvals"><span class="lab">風</span> <span class="${wcls}">${r.w.toFixed(1)}<small>m/s</small></span> ${dirText(r.dir)}　<span class="lab">波</span> <span class="${vcls}">${waveTxt}${r.wave!=null?'<small>m</small>':''}</span>${tags}</div>
-      <div class="hbadge ${r.verdict}">${r.verdict}</div>
+    const wover=r.w>=WIND_STOP?'over':''; const vover=(r.wave!=null&&r.wave>=WAVE_STOP)?'over':'';
+    const tags=[];
+    if(r.thunder) tags.push('<span class="t-bolt">雷の予報</span>');
+    if(r.off===2) tags.push('<span class="t-off">沖向きの風</span>'); else if(r.off===1) tags.push('<span class="t-off" style="opacity:.8">やや沖向きの風</span>');
+    if(r.swell) tags.push(`<span class="t-swell">うねり ${r.sp.toFixed(0)}秒</span>`);
+    return `<div class="hrow num">
+      <div class="htime">${r.h}時</div>
+      <div class="r"><span class="${wover}">${r.w.toFixed(1)}</span><span class="unit">m/s</span></div>
+      <div class="hdir">${dirText(r.dir)}</div>
+      <div class="r">${r.wave!=null?`<span class="${vover}">${r.wave.toFixed(1)}</span><span class="unit">m</span>`:'<span class="hdir">—</span>'}</div>
+      <span class="pill ${r.verdict}">${VSHORT[r.verdict]}</span>
+      ${tags.length?`<div class="htags">${tags.join('')}</div>`:''}
     </div>`;
   }).join('');
 
-  let advice='';
-  if(a.thunderHours.length){
-    const list=a.thunderHours.map(h=>`${pad(h)}時台`).join('・');
-    advice+=`<div class="advice thunder">⚡ ${list}に雷の予報。その時間帯は絶対に出ないでください。</div>`;
-  }
-  if(a.retreat!=null){
-    advice+=`<div class="advice">※ ${a.retreat}時以降は条件が悪化します。出艇するなら${a.retreat}時より前（午前中など）に切り上げを。</div>`;
-  } else if(a.overall==="GO"){
-    advice+=`<div class="advice">${MY_FROM}〜${MY_TO}時を通して比較的穏やかな見込みです。</div>`;
-  }
-  if(a.swellRows.length){
-    advice+=`<div class="advice">🌊 周期${a.maxSwellPeriod.toFixed(0)}秒前後の<b>うねり</b>が入る予報です。沖では小さく見えても、浜に寄ると盛り上がって崩れます。出艇・着岸の瞬間に、波をかぶらないように。</div>`;
-  }
+  // 一日の帯（この道具だけの部品）
+  const cells=a.rows.map(r=>`<div class="cell ${r.verdict}${r.thunder?' bolt':''}" title="${r.h}時：${VLABEL[r.verdict]}"><i></i><span>${r.h}</span></div>`).join('');
+  const goHours=a.rows.filter(r=>r.verdict==='GO').map(r=>r.h);
+  const stripNote = goHours.length ? `出られそう ${goHours.length}時間` : '出られそうな時間なし';
+
+  // 注意（一行ずつ）
+  const notes=[];
+  if(a.thunderHours.length) notes.push(`<div class="note stop">${a.thunderHours.map(h=>`${h}時台`).join('・')}に雷の予報。その時間帯は絶対に出ないでください。</div>`);
+  if(a.retreat!=null) notes.push(`<div class="note">${a.retreat}時から条件が悪くなります。出るなら${a.retreat}時より前に岸へ向かって漕ぎ始めましょう。</div>`);
+  else if(a.overall==="GO") notes.push(`<div class="note calm">${MY_FROM}〜${MY_TO}時を通して、比較的穏やかな見込みです。</div>`);
+  if(a.swellRows.length) notes.push(`<div class="note">周期${a.maxSwellPeriod.toFixed(0)}秒前後の<b>うねり</b>が入ります。沖では小さく見えても、浜に寄ると盛り上がって崩れます。出る瞬間と上がる瞬間に注意。</div>`);
   const offRows=a.rows.filter(r=>r.off===2);
-  if(offRows.length){
-    const list=offRows.map(r=>`${pad(r.h)}時台`).join('・');
-    advice+=`<div class="advice">🌬️ ${list}は<b>陸から海へ吹く風</b>（沖に流される向き）です。風が弱くても、気づかないうちに沖へ出ます。岸との距離をこまめに確認してください。</div>`;
-  }
+  if(offRows.length) notes.push(`<div class="note">${offRows.map(r=>`${r.h}時台`).join('・')}は<b>陸から海へ吹く風</b>（沖に流される向き）。弱くても気づかないうちに沖へ出ます。</div>`);
 
-  let tideHtml='<span style="color:var(--muted)">潮汐データ取得不可</span>';
+  // 潮
+  let tideHtml='<span class="hdir">潮汐データを取得できませんでした</span>';
   if(a.tides){
-    const hi=a.tides.flood.map(x=>`<span class="hi">満 ${x.time.slice(0,5)} (${x.cm}cm)</span>`).join('');
-    const lo=a.tides.ebb.map(x=>`<span class="lo">干 ${x.time.slice(0,5)} (${x.cm}cm)</span>`).join('');
-    tideHtml=`<div class="tide-line">${hi}${lo}</div>`;
+    const hi=a.tides.flood.map(x=>`<span class="hi"><b>満</b>${x.time.slice(0,5)}（${x.cm}cm）</span>`).join('');
+    const lo=a.tides.ebb.map(x=>`<span class="lo"><b>干</b>${x.time.slice(0,5)}（${x.cm}cm）</span>`).join('');
+    tideHtml=`<div class="tide-line num">${hi}${lo}</div>`;
   }
-
   const conf=a.lowConfidence
-    ? `<div class="conf show">予報が割れています（気象モデル2系統の風速差 平均約${a.divAvg.toFixed(1)}m/s）。信頼度が低いため判定を一段厳しくしています。</div>`
+    ? `<div class="conf show">予報が割れています（2つの気象モデルの風速の差が平均約${a.divAvg.toFixed(1)}m/s）。当てにしにくいので、判定を一段厳しくしています。</div>`
     : '';
+  const windOver=a.maxWind>=WIND_STOP, waveOver=a.anyWave&&a.maxWave>=WAVE_STOP;
 
   return `
   <div class="day">
-    <div class="day-head"><h2>【${mdjp(a.dateStr)}の出艇判断】</h2><span class="day-date">${weekdayOf(a.dateStr)}曜</span></div>
-    <div class="verdict ${a.overall}">
-      <div class="badge ${a.overall}">${a.overall}<small>${VLABEL[a.overall]}</small></div>
-      <div class="verdict-text">
-        <div class="hitokoto">${escapeHtml(hitokoto(a))}</div>
-        <div class="why">総合判断：${a.reasons.map(escapeHtml).join(' / ')}</div>
-        ${advice}
-      </div>
+    <div class="day-head"><h2>${mdjp(a.dateStr)}（${weekdayOf(a.dateStr)}）</h2><span class="day-date">${MY_FROM}〜${MY_TO}時で判定</span></div>
+    <div class="answer ${a.overall}">
+      <div class="aw"><b>${a.overall}</b><span>${VLABEL[a.overall]}</span></div>
+      <p class="hitokoto">${escapeHtml(hitokoto(a))}</p>
     </div>
+    <div class="facts num">
+      <div class="fact"><div class="k">最大風速</div><div class="v ${windOver?'over':''}">${a.maxWind.toFixed(1)}<small>m/s</small></div><div class="c">5未満でOK</div></div>
+      <div class="fact"><div class="k">最大波高</div><div class="v ${waveOver?'over':''}">${a.anyWave?a.maxWave.toFixed(2):'—'}<small>${a.anyWave?'m':''}</small></div><div class="c">0.5未満でOK</div></div>
+      <div class="fact"><div class="k">うねり</div><div class="v">${a.swellRows.length?`${a.maxSwellPeriod.toFixed(0)}<small>秒</small>`:'なし'}</div><div class="c">周期8秒以上で注意</div></div>
+      <div class="fact"><div class="k">雷</div><div class="v ${a.thunderHours.length?'over':''}">${a.thunderHours.length?'あり':'なし'}</div><div class="c">あればやめる</div></div>
+    </div>
+    <div class="sea">
+      <p class="k"><span>一日の海（${MY_FROM}〜${MY_TO}時）</span><span>${stripNote}</span></p>
+      ${seaChart(a)}
+    </div>
+    ${notes.length?`<div class="notes">${notes.join('')}</div>`:''}
     ${conf}
-    <div class="hwrap">${rowsHtml||'<div class="loading">時間別データなし</div>'}</div>
+    <details class="hours"><summary>時間ごとの数字を見る</summary>
+    <div class="hwrap">
+      <div class="hhead"><span>時刻</span><span class="r">風</span><span>向き</span><span class="r">波</span><span class="r">判定</span></div>
+      ${rowsHtml||'<div class="loading">時間ごとのデータがありません</div>'}
+    </div>
+    </details>
     <div class="tide-row"><p class="k">潮汐（${escapeHtml(STATION?STATION.name:'')}）</p>${tideHtml}</div>
-    <div class="sharebar"><button type="button" data-share="day" data-off="${a.dayOffset}">📋 この日の判定をコピー（LINE等で共有）</button></div>
+    <div class="sharebar"><button type="button" data-share="day" data-off="${a.dayOffset}">この日の判定をコピー（LINEなどで送れます）</button></div>
   </div>`;
 }
 
@@ -589,22 +659,28 @@ function renderWeek(data){
     const a=assessDay(data,off);
     if(a.overall==null) continue;
     const tt=tideTypeOf(data,a.dateStr);
-    const waveTxt=a.anyWave? `${a.maxWave.toFixed(2)}m` : '—';
-    const offMax=a.rows.some(r=>r.off===2)?'／<span class="offshore">沖向きの風あり</span>':'';
-    const bolt=a.thunderHours.length?'／⚡雷':'';
-    const swellW=a.swellRows.length?`／<span class="swell">うねり${a.maxSwellPeriod.toFixed(0)}秒</span>`:'';
-    rows.push(`<div class="wrow ${a.overall}">
-      <div class="wday">${mdLabel(a.dateStr)}<small>${weekdayOf(a.dateStr)}曜${tt?'・'+escapeHtml(tt):''}</small></div>
-      <div class="wvals">風 <b>${a.maxWind.toFixed(1)}</b>m/s ／ 波 <b>${waveTxt}</b>${bolt}${offMax}${swellW}${a.lowConfidence?'<br><small>予報が割れています</small>':''}</div>
-      <div class="wbadge ${a.overall}">${a.overall}</div>
+    const subs=[];
+    if(a.thunderHours.length) subs.push('<span style="color:var(--stop-ink);font-weight:700">雷の予報</span>');
+    if(a.rows.some(r=>r.off===2)) subs.push('<span class="offshore">沖向きの風あり</span>');
+    if(a.swellRows.length) subs.push(`<span class="swell">うねり${a.maxSwellPeriod.toFixed(0)}秒</span>`);
+    if(a.lowConfidence) subs.push('予報が割れています');
+    rows.push(`<div class="wrow num">
+      <div class="wday">${mdLabel(a.dateStr)}<small>${weekdayOf(a.dateStr)}${tt?'・'+escapeHtml(tt):''}</small></div>
+      <div class="r"><span class="${a.maxWind>=WIND_STOP?'over':''}">${a.maxWind.toFixed(1)}</span><span class="unit" style="font-size:11px;color:var(--muted)">m/s</span></div>
+      <div class="r">${a.anyWave?`<span class="${a.maxWave>=WAVE_STOP?'over':''}">${a.maxWave.toFixed(2)}</span><span style="font-size:11px;color:var(--muted)">m</span>`:'—'}</div>
+      <span class="pill wbadge ${a.overall}">${VSHORT[a.overall]}</span>
+      ${subs.length?`<div class="wsub">${subs.join('・')}</div>`:''}
     </div>`);
   }
   return `
   <div class="day">
-    <div class="day-head"><h2>【これから${FORECAST_DAYS}日間】</h2><span class="day-date">${MY_FROM}〜${MY_TO}時で判定</span></div>
-    <p class="weekcap">数字は、その日の<b>${MY_FROM}〜${MY_TO}時のうち一番強い風・高い波</b>です。先の日ほど予報は変わります。</p>
-    <div class="week">${rows.join('')||'<div class="loading">データがありません。</div>'}</div>
-    <div class="sharebar"><button type="button" data-share="week">📋 出られそうな日をコピー（LINE等で共有）</button></div>
+    <div class="day-head"><h2>これから${FORECAST_DAYS}日間</h2><span class="day-date">${MY_FROM}〜${MY_TO}時で判定</span></div>
+    <p class="weekcap">数字は、その日の${MY_FROM}〜${MY_TO}時のうち<b>一番強い風・一番高い波</b>。先の日ほど予報は変わります。</p>
+    <div class="week">
+      <div class="wrow whead"><span>日付</span><span class="r">最大風速</span><span class="r">最大波高</span><span class="r">判定</span></div>
+      ${rows.join('')||'<div class="loading">データがありません。</div>'}
+    </div>
+    <div class="sharebar"><button type="button" data-share="week">出られそうな日をコピー（LINEなどで送れます）</button></div>
   </div>`;
 }
 
@@ -666,7 +742,7 @@ async function load(lat,lon,locLabel){
   STATION=nearestStation(lat,lon);
   const distTxt=STATION.dist>60?`<span class="locwarn">約${Math.round(STATION.dist)}km・遠い</span>`:`約${Math.round(STATION.dist)}km`;
   document.getElementById('locText').innerHTML=
-    `📍 <b>${locLabel}</b>（${lat.toFixed(3)}, ${lon.toFixed(3)}）<br>潮汐観測点：<b>${escapeHtml(STATION.name)}</b>（${distTxt}）`;
+    `<b>${locLabel}</b>（${lat.toFixed(3)}, ${lon.toFixed(3)}）<br>潮汐観測点：<b>${escapeHtml(STATION.name)}</b>（${distTxt}）`;
   try{
     const wxp=fetchWeather(lat,lon);
     const tdp=fetchTide(STATION);
